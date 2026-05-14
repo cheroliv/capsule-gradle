@@ -1,0 +1,52 @@
+= SESSION_CHECKLIST — capsule-gradle
+
+== Hook d'Ouverture — Avant de commencer une session
+
+. [ ] Lire `PROMPT_REPRISE.adoc` — contexte de la session precedente
+. [ ] Lire `AGENT.adoc` — regles absolues (7 regles)
+. [ ] Lire `.agents/INDEX.adoc` — roadmap, etat des EPICs, portefeuille
+. [ ] Verifier l'etat git (`git status`)
+. [ ] Verifier que le build compile (`./gradlew :capsule:compileKotlin`)
+. [ ] Verifier que `./gradlew tasks` fonctionne
+
+== Pendant la session
+
+. [ ] Respecter Regle 1 — AUCUN commit sans permission
+. [ ] Respecter Regle 2 — AUCUN publish sans permission
+. [ ] Respecter Regle 7 — CAPSULE CONSUME SLIDER sans modifier le deck source
+. [ ] Respecter Regle 6 — ZERO secret en dur
+. [ ] Verifier que chaque modification compile
+
+== Hook de Fermeture — Procedure 6 etapes
+
+. [ ] 1. Rapport de session → `.agents/sessions/NNN-sujet.adoc`
+. [ ] 2. Mise a jour `PROMPT_REPRISE.adoc`
+. [ ] 3. Mise a jour `INDEX.adoc`
+. [ ] 4. Mise a jour `SESSIONS_HISTORY.adoc`
+. [ ] 5. Archivage `COMPLETED_TASKS_ARCHIVE.adoc`
+. [ ] 6. Verification — `git status`, absence de secrets, build compile
+
+== Commandes de Verification
+
+[source,shell]
+----
+# Verifier l'etat git
+git status
+
+# Verifier l'absence de secrets
+grep -r "TOKEN\|SECRET\|PASSWORD\|API_KEY\|gho_\|ghp_" --include="*.kts" --include="*.properties" --include="*.yml"
+
+# Verifier que le build compile
+./gradlew :capsule:compileKotlin
+
+# Verifier que les tests passent (NE PAS LANCER sans permission)
+# ./gradlew check
+----
+
+== Rappels
+
+* Capsule depend de slider-gradle en compileOnly — le deck reveal.js est le contrat
+* TTS : Piper (local, offline) en priorite, API externe en fallback
+* Playwright : installe via npx, pilote Chromium headless
+* WebM : format natif Playwright, aucune conversion necessaire
+* Aucun commit sans permission explicite

@@ -1,0 +1,43 @@
+= Session 000 — Bootstrap Gouvernance Agent + Cadrage Architecture Capsule
+:tags: [CAP-0, bootstrap, gouvernance]
+:date: 2026-05-14
+
+'''
+== Resumé
+
+Bootstrap complet de `capsule-gradle` : gouvernance agent (.agents/)
++ cadrage architecture (doc/CAPSULE_ARCHITECTURE.adoc avec 4 diagrammes PlantUML).
+
+== EPIC couvert
+
+|===
+| EPIC | Tâche | Statut
+| CAP-0 | CAP-0.1 — Gouvernance agent capsule | ✅ TERMINE
+| CAP-0 | CAP-0.2 — Cadrage architecture pipeline capsule | ✅ TERMINE
+| CAP-0 | CAP-0.3 — Initialisation projet Gradle | 🔲 A VENIR
+|===
+
+== Fichiers créés
+
+|===
+| Fichier | Lignes | Contenu
+| `AGENT.adoc` | 52 | 7 règles absolues, stack, tâches principales
+| `.agents/INDEX.adoc` | 68 | Dashboard, roadmap 6 EPICs, portefeuille
+| `.agents/SESSION_CHECKLIST.adoc` | 47 | Hook ouverture/fermeture + commandes vérification
+| `.agents/SESSION_PROCEDURE.adoc` | 30 | Procédure 6 étapes fin de session
+| `.agents/PROMPT_REPRISE.adoc` | 26 | Contexte session 001 (CAP-1)
+| `.agents/SESSIONS_HISTORY.adoc` | 9 | Journal session 000
+| `doc/CAPSULE_ARCHITECTURE.adoc` | 310 | 4 diagrammes PlantUML + séquence + décisions techniques
+|===
+
+== Decisions architecture
+
+. *WebM* — natif Playwright, pas FFmpeg, pas de perte de qualité
+. *Piper* — TTS local offline OSS, voix françaises disponibles
+. *Playwright* — pilotage reveal.js natif, capture video+audio integree
+. *compileOnly slider* — contrat par fichiers, decouplage fort
+. *Option A* — injection audio dans le deck HTML (propre, testable)
+
+== Roadmap definie
+
+6 EPICs : CAP-1 (plugin Gradle) → CAP-2 (TTS) → CAP-3 (Playwright) → CAP-4 (orchestration) → CAP-5 (tests) → CAP-6 (integrations N3)

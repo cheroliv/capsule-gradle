@@ -1,0 +1,38 @@
+= PROMPT_REPRISE — capsule-gradle Session 001
+
+_Mission_ : EPIC CAP-1 — Plugin Gradle `capsule` (structure Kotlin, compileOnly slider, taches)
+_Statut_ : EN ATTENTE
+_Date_ : 2026-05-14
+
+== Contexte
+
+Session 000 TERMINE — Bootstrap gouvernance agent capsule + cadrage architecture :
+- Gouvernance complete : AGENT.adoc, INDEX.adoc, SESSION_CHECKLIST.adoc, SESSION_PROCEDURE.adoc
+- Architecture documentee : doc/CAPSULE_ARCHITECTURE.adoc (diagrammes PlantUML pipeline, composants, sequence)
+- 6 EPICs definis (CAP-1 a CAP-6)
+- Decisions architecture : Piper (TTS local), WebM (pas de FFmpeg), Playwright (capture native)
+
+== Sujets Session 001
+
+- Creer la structure Gradle : settings.gradle.kts, build.gradle.kts
+- Package Kotlin : `com.cheroliv.capsule`
+- Fichiers : CapsulePlugin.kt, CapsuleManager.kt, CapsuleConfiguration (models)
+- Declaration dependance compileOnly sur slider-gradle
+- Taches initiales : capsulescript (recuperation script existant)
+
+== Fichiers crees Session 000
+
+- `AGENT.adoc`
+- `.agents/INDEX.adoc`
+- `.agents/SESSION_CHECKLIST.adoc`
+- `.agents/SESSION_PROCEDURE.adoc`
+- `.agents/PROMPT_REPRISE.adoc`
+- `doc/CAPSULE_ARCHITECTURE.adoc`
+
+== Procedure demarrage Session 001
+
+----
+Je travaille sur le plugin capsule-gradle.
+Applique la procedure d'ouverture standard AGENT.adoc.
+Objectif : initialiser la structure Gradle du plugin capsule.
+----

@@ -1,0 +1,430 @@
+= CAPSULE_ARCHITECTURE — Pipeline Capsule Video Pedagogique
+:author: cheroliv
+:revdate: 2026-05-14
+:revnumber: 1.0
+:toc: macro
+:toclevels: 3
+
+toc::[]
+
+'''
+== Vision
+
+Transformer automatiquement un deck reveal.js (produit par slider-gradle)
+en une capsule video WebM avec narration TTS synchronisee, sans
+post-production humaine.
+
+=== Stack
+
+[cols="3,5"]
+|===
+| Brique | Role
+| slider-gradle | Source unique de verite — produit le deck reveal.js + script capsule
+| Piper | TTS local, offline — genere un MP3 par slide a partir des notes speaker
+| Playwright | Pilote headless Chromium — controle reveal.js, capture video/audio
+| FFmpeg | NON utilise — WebM natif Playwright, pas de conversion necessaire
+|===
+
+'''
+== Pipeline Global
+
+[plantuml,target="pipeline-global",format="svg"]
+----
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontSize 12
+
+title Pipeline Capsule Video — Vue Globale
+
+rectangle "AsciiDoc\nsource" as adoc #LightYellow
+rectangle "slider-gradle\n(AsciidoctorJRevealJSTask)" as slider #LightBlue
+rectangle "Deck reveal.js\nHTML\n+ speaker notes" as deck #LightGreen
+rectangle "capsule-gradle\n(CapsulePlugin)" as capsule #LightCoral
+database "slide-*.mp3\n(TTS Piper)" as audio #Lavender
+rectangle "Playwright\nheadless Chrome" as playwright #LightSalmon
+rectangle "capsule.webm\nvideo + audio" as livrable #Gold
+
+adoc --> slider : compile
+slider --> deck : produit
+deck --> capsule : consomme
+capsule --> audio : genere TTS
+deck --> playwright : pilote
+audio --> playwright : injecte
+playwright --> livrable : capture video
+@enduml
+----
+
+Le pipeline global transforme l'AsciiDoc source en un livrable video unique.
+
+'''
+== Architecture des Composants
+
+[plantuml,target="composants",format="svg"]
+----
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontSize 12
+
+title Architecture — Composants et Responsabilites
+
+package "slider-gradle (existant)" #LightBlue {
+  component "AsciidoctorJRevealJSTask" as asciidoctor
+  component "asciidocCapsule task" as capsuleScript
+  database "deck.html" as deckSource
+  database "script.txt" as script
+}
+
+package "capsule-gradle (nouveau)" #LightCoral {
+  component "CapsulePlugin" as plugin
+  component "TtsManager\n(Piper CLI)" as tts
+  component "PlaywrightManager\n(npx playwright)" as pwMgr
+  component "CapsuleVideoTask\n(orchestration)" as videoTask
+}
+
+package "Externes" #LightGrey {
+  component "Piper\n(TTS engine)" as piper
+  component "Playwright\n(headless Chromium)" as playwright
+}
+
+cloud "Livrable" {
+  component "capsule.webm\n(video + audio synchro)" as output
+}
+
+deckSource --> plugin : compileOnly\ncontrat par fichier
+script --> plugin : compileOnly\ncontrat par fichier
+
+plugin --> tts
+plugin --> pwMgr
+plugin --> videoTask
+
+tts --> piper : CLI
+pwMgr --> playwright : npx
+
+videoTask --> output
+
+note right of videoTask
+  Orchestre :
+  1. TTS generation
+  2. Deck modification (inject <audio>)
+  3. Playwright capture
+end note
+@enduml
+----
+
+Le plugin capsule-gradle est le chef d'orchestre. Il consomme slider-gradle
+en compileOnly et exploite deux outils externes (Piper, Playwright) pour
+produire la capsule video.
+
+'''
+== Sequence Detaillee
+
+[plantuml,target="sequence",format="svg"]
+----
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontSize 12
+
+title Sequence — De l'AsciiDoc a la Capsule Video
+
+actor "User/Gradle" as user
+participant "slider-gradle" as slider
+participant "deck.html\n(reveal.js)" as deck
+participant "capsule-gradle\nCapsuleVideoTask" as capsule
+participant "Piper\n(TTS engine)" as piper
+participant "Playwright\n(headless Chrome)" as playwright
+participant "capsule.webm" as output
+
+== Phase 1: Generation Deck (existante) ==
+user -> slider : ./gradlew asciidoctorRevealJs
+slider -> deck : genere HTML + speaker notes
+user -> slider : ./gradlew asciidocCapsule
+slider -> deck : genere script.txt
+
+== Phase 2: TTS ==
+user -> capsule : ./gradlew capsulevideo
+capsule -> deck : lit script.txt
+loop chaque slide
+  capsule -> piper : tts("texte speaker note")
+  piper -> capsule : slide-N.mp3
+end
+
+== Phase 3: Injection Audio ==
+capsule -> deck : modifie HTML\n(injecte <audio src="slide-N.mp3"> par section)
+
+== Phase 4: Capture Video ==
+capsule -> playwright : lance Chromium headless\n+ recordVideo
+playwright -> deck : charge deck.html modifie
+activate deck
+loop chaque slide
+  deck -> deck : joue slide-N.mp3
+  deck -> deck : attend 'ended'
+  capsule -> playwright : Reveal.next()
+  deck -> deck : transition + slide suivante
+end
+deactivate deck
+playwright -> output : sauvegarde capsule.webm
+capsule -> user : ✅ capsule.webm produit
+@enduml
+----
+
+Le processus complet, de la generation du deck a la capsule video finale.
+
+'''
+== Etapes du processus
+
+=== Etape 0 — AsciiDoc Source (existant)
+
+Fichier AsciiDoc structure avec balises `[NOTE.speaker]` :
+
+[,asciidoc]
+----
+== Titre de la slide
+
+Contenu visible...
+
+[NOTE.speaker]
+====
+Texte que le formateur prononcerait a cette slide.
+Devient le script TTS.
+====
+----
+
+=== Etape 1 — Generation reveal.js (slider-gradle, existant)
+
+`./gradlew asciidoctorRevealJs` → deck HTML avec :
+
+* `<section>` par slide
+* `<aside class="notes">` avec le texte speaker
+* attributs `data-transition`, `data-auto-animate`
+* config reveal.js complete
+
+=== Etape 2 — Extraction script capsule (slider-gradle, existant)
+
+`./gradlew asciidocCapsule` → `*-script.txt` :
+
+[,txt]
+----
+=== CAPSULE SCRIPT : mon-deck ===
+
+--- SLIDE 1 : Agenda ---
+Introduce the plan in 2 minutes...
+
+--- SLIDE 2 : First Topic ---
+Emphasise the most common misconception...
+----
+
+=== Etape 3 — Synthese TTS (capsule-gradle, a implementer)
+
+[cols="3,5"]
+|===
+| Input | `*-script.txt` (un segment par slide)
+| Output | `slide-01.mp3`, `slide-02.mp3`...
+| Moteur | Piper (local, offline)
+| Timing | la duree de chaque MP3 → duree d'affichage de la slide
+|===
+
+=== Etape 4 — Injection Audio (capsule-gradle, a implementer)
+
+Option retenue : modifier le deck HTML (Option A) — plus propre, plus testable.
+
+Le deck modifie contient un `<audio id="audio-N" src="slide-N.mp3">` par `<section>`.
+Un script minimal ajoute au deck declare l'autoplay chaine :
+
+[,javascript]
+----
+// Ajoute au deck modifie
+let currentAudio = null;
+let currentSlide = 0;
+const audios = document.querySelectorAll('section audio');
+Reveal.on('slidechanged', (event) => {
+  const idx = event.indexh;
+  if (currentAudio) currentAudio.pause();
+  currentAudio = audios[idx];
+  if (currentAudio) {
+    currentAudio.currentTime = 0;
+    currentAudio.play();
+  }
+});
+audios[0]?.play(); // demarre la premiere slide
+----
+
+=== Etape 5 — Capture Playwright (capsule-gradle, a implementer)
+
+[cols="3,5"]
+|===
+| Input | Deck reveal.js modifie (avec `<audio>` injectes)
+| Action | Playwright pilote Chromium headless, reveal.js gere l'avancement
+| Output | `capsule.webm` (video + audio synchro)
+| Format | WebM natif, pas de conversion
+|===
+
+Script Playwright (pseudo-code) :
+
+[,javascript]
+----
+const { chromium } = require('playwright');
+
+const browser = await chromium.launch({ headless: true });
+const context = await browser.newContext({
+  viewport: { width: 1408, height: 792 },
+  recordVideo: { dir: './build/capsule', size: { width: 1408, height: 792 } }
+});
+const page = await context.newPage();
+
+await page.goto('file://' + deckPath);
+
+// Reveal.js gere l'audio via l'event slidechanged
+// Playwright attend la fin de chaque audio + transition
+// puis appelle Reveal.next()
+for (let i = 0; i < slideCount; i++) {
+  await page.waitForFunction(`document.getElementById('audio-${i}')?.ended === true`,
+    { timeout: 120000 }
+  );
+  // attendre la transition CSS
+  await page.waitForTimeout(500);
+  if (i < slideCount - 1) {
+    await page.evaluate('Reveal.next()');
+  }
+}
+
+await page.waitForTimeout(2000); // marge a la fin
+await context.close();
+await browser.close();
+----
+
+=== Etape 6 — Livrable final
+
+Un fichier `capsule.webm` par deck, lisible par VLC et tous les navigateurs modernes. Aucune post-production requise.
+
+'''
+== Diagramme de Deploiement
+
+[plantuml,target="deploiement",format="svg"]
+----
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontSize 12
+
+title Diagramme de Deploiement — Capsule Video
+
+node "Poste developpeur / CI" {
+  component "Piper\n(processus local)" as piper_proc #Lavender
+  component "Chromium\n(headless)" as chrome #LightSalmon
+  component "Gradle\n(JVM)" as gradle #LightBlue
+}
+
+database "sources" {
+  folder "slides/misc/" {
+    file "mon-deck.adoc" as adocSource
+  }
+}
+
+database "artefacts" {
+  folder "slider → build/docs/asciidocRevealJs/" {
+    file "deck.html" as deckFile
+  }
+  folder "slider → build/capsule/" {
+    file "script.txt" as scriptFile
+  }
+  folder "capsule → build/capsule/" {
+    file "slide-01.mp3" as audio1
+    file "slide-02.mp3" as audio2
+    file "capsule.webm" as capsuleFile #Gold
+  }
+}
+
+gradle --> adocSource : lit
+gradle --> deckFile : consomme (slider)
+gradle --> scriptFile : consomme (slider)
+gradle --> piper_proc : CLI pipe
+piper_proc --> audio1 : genere
+piper_proc --> audio2 : genere
+gradle --> chrome : Playwright\npilotage + recordVideo
+chrome --> capsuleFile : capture
+@enduml
+----
+
+'''
+== Organisation du Projet
+
+[,]
+----
+capsule-gradle/
+├── settings.gradle.kts
+├── build.gradle.kts              // dependance slider-gradle (compileOnly)
+├── capsule-plugin/
+│   ├── build.gradle.kts
+│   ├── AGENT.adoc
+│   ├── .agents/
+│   │   ├── INDEX.adoc
+│   │   ├── SESSION_CHECKLIST.adoc
+│   │   ├── SESSION_PROCEDURE.adoc
+│   │   ├── PROMPT_REPRISE.adoc
+│   │   ├── SESSIONS_HISTORY.adoc
+│   │   ├── sessions/
+│   │   └── archives/
+│   ├── doc/
+│   │   └── CAPSULE_ARCHITECTURE.adoc
+│   └── src/
+│       ├── main/kotlin/com/cheroliv/capsule/
+│       │   ├── CapsulePlugin.kt      // point d'entree Gradle
+│       │   ├── CapsuleManager.kt     // orchestration taches
+│       │   ├── CapsuleModels.kt      // configuration DSL
+│       │   ├── TtsManager.kt         // integration Piper/API
+│       │   └── PlaywrightManager.kt  // pilotage capture
+│       ├── main/resources/
+│       │   └── playwright-script.mjs  // template script Playwright
+│       ├── test/kotlin/com/cheroliv/capsule/
+│       │   └── CapsulePluginTest.kt
+│       └── functionalTest/kotlin/com/cheroliv/capsule/
+│           └── CapsuleFunctionalTests.kt
+└── README.adoc
+----
+
+'''
+== Contrat slider → capsule
+
+Le contrat entre les deux plugins est minimal :
+
+[cols="3,5"]
+|===
+| slider expose | capsule consomme
+| `build/docs/asciidocRevealJs/*-deck.html` | Deck reveal.js pret a etre pilote
+| `build/capsule/*-script.txt` | Script TTS, un segment par slide
+| `slides/misc/*.adoc` (source) | Acces direct au texte des notes speaker
+|===
+
+Capsule ne modifie JAMAIS les fichiers produits par slider.
+Slider n'a aucune dependance sur capsule.
+
+'''
+== Decisions Techniques
+
+=== Pourquoi WebM (pas FFmpeg/MP4) ?
+
+* Playwright capture nativement en WebM
+* VLC, Chrome, Firefox, Edge lisent WebM
+* YouTube accepte WebM
+* Toute transco WebM→MP4 degrade la qualite (generation de perte supplementaire)
+* ZERO dependance FFmpeg dans le pipeline
+
+=== Pourquoi Piper (TTS local) ?
+
+* Offline — pas de cle API, pas de cout par requete, pas de latence reseau
+* Open source — coherent avec la licence Apache 2.0 du projet
+* Voix francaises disponibles (fr_FR)
+* API externe (ElevenLabs, OpenAI) en fallback optionnel
+
+=== Pourquoi Playwright (pas Hyperframes/impress.js) ?
+
+* Pilotage natif de reveal.js — pas besoin de changer de moteur de slides
+* Capture video + audio integree dans une seule session
+* Licence Apache 2.0
+* API JavaScript familiere, executable en npx sans dependance npm projet
+
+=== Pourquoi compileOnly slider-gradle ?
+
+* Decouplage fort — capsule ne recompile pas slider
+* Contrat par fichiers — le deck HTML et le script texte sont l'interface
+* slider reste maitre de son output, capsule reste maitre de sa capture
+* Possibilite d'utiliser un autre generateur de slides plus tard (pas de couplage au code)

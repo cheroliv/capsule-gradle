@@ -1,0 +1,35 @@
+= SESSION_PROCEDURE — capsule-gradle
+
+== Procedure de Fin de Session — 6 Etapes Obligatoires
+
+. *Rapport de session* — Creer `.agents/sessions/NNN-sujet.adoc`
+. *Mise a jour PROMPT_REPRISE.adoc* — Contexte de reprise session N+1 (max 70 lignes)
+. *Mise a jour INDEX.adoc* — Numero de session, roadmap, statut EPICs
+. *Mise a jour SESSIONS_HISTORY.adoc* — Ajouter l'entree dans l'historique
+. *Archivage COMPLETED_TASKS_ARCHIVE*.adoc — Archiver les taches terminees
+. *Verification* — `git status`, absence de secrets, build compile
+
+== Commandes de Verification
+
+[source,shell]
+----
+# Verifier l'etat git
+git status
+
+# Verifier l'absence de secrets
+grep -r "TOKEN\|SECRET\|PASSWORD\|API_KEY\|gho_\|ghp_" --include="*.kts" --include="*.properties" --include="*.yml"
+
+# Verifier que le build compile
+./gradlew :capsule:compileKotlin
+
+# Verifier que les tests passent (NE PAS LANCER sans permission)
+# ./gradlew check
+----
+
+== Rappels
+
+* Capsule depend de slider-gradle en compileOnly — ne pas importer en implementation
+* Le contrat slider→capsule est le deck reveal.js HTML + le script capsule `*-script.txt`
+* Piper pour le TTS local, pas de cle API en dur
+* Playwright en npx, pas de dependance npm dans le projet
+* Aucun commit sans permission explicite

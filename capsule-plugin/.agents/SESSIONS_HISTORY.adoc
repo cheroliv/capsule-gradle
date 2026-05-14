@@ -1,0 +1,10 @@
+= SESSIONS_HISTORY — capsule-gradle
+
+_Date creation_ : 2026-05-14
+
+== Sessions
+
+|===
+| # | Date | Type | Sujet | Score
+| 000 | 2026-05-14 | bootstrap | CAP-0.1 + CAP-0.2 — Gouvernance agent + cadrage architecture | ✅ TERMINE
+|===

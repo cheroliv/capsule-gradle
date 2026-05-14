@@ -1,0 +1,49 @@
+= AGENT.adoc — Capsule Gradle
+
+_Produit_ : Capsule video pedagogique comme plugin Gradle
+_Licence_ : Apache 2.0 (OSS)
+_DAG_ : N2 — Plugin Gradle de generation de capsules video
+_Dependance_ : compileOnly slider-gradle (consomme les decks reveal.js)
+
+== Principe
+
+Le plugin `capsule` transforme un deck reveal.js genere par `slider-gradle`
+en capsule video MP4/WebM avec TTS synchronise. Il orchestre Playwright
+(pilotage + capture) et un moteur TTS (local ou API) a partir des notes
+speaker deja presentes dans l'AsciiDoc source.
+
+== Regles Absolues
+
+=== 1. COMMITS/GIT — INTERDICTION FORMELLE sans permission
+=== 2. PUBLISH — INTERDICTION FORMELLE sans permission
+=== 3. DAG N2 — importable par N3 engine, jamais importe N3
+=== 4. PROCEDURE DE FIN DE SESSION — 6 ETAPES OBLIGATOIRES (voir `.agents/SESSION_PROCEDURE.adoc`)
+=== 5. HOOK OUVERTURE — Checklist `.agents/SESSION_CHECKLIST.adoc` obligatoire
+=== 6. ZERO secret/token/api key en dur dans le code source
+=== 7. CAPSULE CONSUME SLIDER — capsule ne modifie jamais le deck source, il le lit
+
+== Taches Principales
+
+  ./gradlew capsulescript           → extraire les scripts TTS par deck
+  ./gradlew capsulebuild            → generer les MP3 TTS par slide
+  ./gradlew capsulevideo            → capturer la video Playwright (deck + audio)
+  ./gradlew check                   → tous les tests (unitaire + fonctionnel + Cucumber)
+
+== Tests
+
+Le projet utilise JUnit5, GradleTestKit et Cucumber BDD.
+Toute modification de code source DOIT passer `./gradlew check`
+(sauf permission contraire).
+
+== Stack
+
+- Kotlin — DSL Gradle
+- Playwright — pilotage headless Chromium + capture video
+- Piper ou API TTS externe — synthese vocale a partir des notes speaker
+- slider-gradle — dependance compileOnly, contrat : deck reveal.js HTML + script capsule
+
+== Ne remplace PAS opencode
+
+Le plugin est invoque PAR opencode (via tool use).
+Il automatise la capture video, mais la validation humaine
+du contenu pedagogique reste obligatoire.

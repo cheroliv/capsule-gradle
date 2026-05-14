@@ -1,0 +1,72 @@
+= INDEX — Capsule Gradle
+:toc:
+
+_Regles absolues_ : voir `AGENT.adoc`
+_DAG_ : N2 — Plugin Gradle de generation de capsules video
+_Dependance N2_ : slider-gradle (compileOnly)
+
+_Derniere mise a jour_ : 2026-05-14
+_Session en cours_ : 000 — Bootstrap gouvernance + cadrage architecture
+
+'''
+== REGLES ABSOLUES (resume)
+
+=== 1. COMMITS/GIT — INTERDICTION FORMELLE sans permission
+=== 2. PUBLISH — INTERDICTION FORMELLE sans permission
+=== 3. DAG N2 — importable par N3 engine, jamais importe N3
+=== 4. PROCEDURE DE FIN DE SESSION — 6 ETAPES OBLIGATOIRES
+=== 5. HOOK OUVERTURE — Checklist SESSION_CHECKLIST.adoc obligatoire
+=== 6. ZERO secret/token/api key en dur dans le code source
+=== 7. CAPSULE CONSUME SLIDER — lecture seule du deck
+
+'''
+== Sessions
+
+|===
+| # | Date | Type | Sujet | Score
+| 000 | 2026-05-14 | bootstrap | Gouvernance agent + cadrage architecture CAP-0 | ✅ TERMINE
+|===
+
+'''
+== Roadmap — Etat Actuel
+
+|===
+| EPIC | Description | Statut | Priorite
+| CAP-0 | Bootstrap gouvernance agent capsule (.agents/, AGENT.adoc, doc/) | ✅ TERMINE | P0
+| CAP-1 | Plugin Gradle `capsule` — structure Kotlin, compileOnly slider, taches de base | 🔲 A VENIR | P0
+| CAP-2 | TTS integration — Piper ou API externe, generation MP3 par slide | 🔲 A VENIR | P1
+| CAP-3 | Playwright capture — pilotage reveal.js + enregistrement video/audio WebM | 🔲 A VENIR | P1
+| CAP-4 | CapsuleVideo task — orchestration TTS + Playwright → livrable unique | 🔲 A VENIR | P1
+| CAP-5 | Tests — Cucumber BDD + fonctionnels + unitaires | 🔲 A VENIR | P2
+| CAP-6 | Integrations N3 — export composite-context pour engine | 🔲 A VENIR | P3
+|===
+
+'''
+== EPIC CAP-0 — Detail
+
+_Vision_ : Un plugin Gradle autonome qui transforme un deck
+reveal.js produit par slider-gradle en capsule video WebM
+avec TTS synchronise, sans post-production.
+
+|===
+| Tache | Description | Statut
+| CAP-0.1 | Creer la structure de gouvernance (.agents/, AGENT.adoc) | ✅ TERMINE
+| CAP-0.2 | Rediger le cadrage architecture (doc/CAPSULE_ARCHITECTURE.adoc) | ✅ TERMINE
+| CAP-0.3 | Initialiser le projet Gradle (settings.gradle.kts, build.gradle.kts) | 🔲 A VENIR
+|===
+
+'''
+== Fichiers Associes
+
+|===
+| Fichier | Role | Type
+| `AGENT.adoc` | Directives completes | EAGER
+| `.agents/INDEX.adoc` | Dashboard + roadmap + portefeuille | EAGER
+| `.agents/SESSION_CHECKLIST.adoc` | Checklist ouverture/fermeture session | EAGER
+| `.agents/SESSION_PROCEDURE.adoc` | Procedure 6 etapes fin de session | EAGER
+| `.agents/PROMPT_REPRISE.adoc` | Mission session en cours | EAGER
+| `.agents/SESSIONS_HISTORY.adoc` | Historique complet des sessions | EAGER
+| `.agents/sessions/` | Archives par session | LAZY
+| `.agents/archives/` | Archives taches terminees | LAZY
+| `doc/CAPSULE_ARCHITECTURE.adoc` | Cadrage architecture pipeline capsule | LAZY
+|===

@@ -1,0 +1,8 @@
+= COMPLETED_TASKS_ARCHIVE — Mai 2026
+:toc: left
+
+|===
+| Date | Session | Tâche | Résultat
+| 2026-05-14 | bootstrap | CAP-0.1 — Gouvernance agent capsule | ✅ 7 fichiers gouvernance (.agents/ + AGENT.adoc)
+| 2026-05-14 | bootstrap | CAP-0.2 — Cadrage architecture pipeline capsule | ✅ 310 lignes, 4 diagrammes PlantUML, decisions techniques
+|===
