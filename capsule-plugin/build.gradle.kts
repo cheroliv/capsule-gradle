@@ -30,6 +30,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.slf4j:slf4j-api:2.0.17")
     testRuntimeOnly("ch.qos.logback:logback-classic:1.5.26")
+    testImplementation(libs.bundles.cucumber)
 }
 
 gradlePlugin {
@@ -39,25 +40,67 @@ gradlePlugin {
     }
 }
 
-val functionalTestSourceSet = sourceSets.create("functionalTest")
+val functionalTest: SourceSet by sourceSets.creating {
+    java.srcDirs("src/functionalTest/kotlin")
+    resources.srcDirs("src/functionalTest/resources")
+}
 
 configurations["functionalTestImplementation"].extendsFrom(configurations["testImplementation"])
 configurations["functionalTestRuntimeOnly"].extendsFrom(configurations["testRuntimeOnly"])
 
-val functionalTest by tasks.registering(Test::class) {
-    testClassesDirs = functionalTestSourceSet.output.classesDirs
-    classpath = functionalTestSourceSet.runtimeClasspath
+val functionalTestTask by tasks.registering(Test::class) {
+    description = "Runs functional tests."
+    group = "verification"
+    testClassesDirs = functionalTest.output.classesDirs
+    classpath = functionalTest.runtimeClasspath
     useJUnitPlatform()
 }
 
-gradlePlugin.testSourceSets.add(functionalTestSourceSet)
+gradlePlugin.testSourceSets.add(functionalTest)
 
 tasks.named<Task>("check") {
-    dependsOn(functionalTest)
+    dependsOn(functionalTestTask)
 }
 
 tasks.named<Test>("test") {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags("integration")
+    }
+    filter {
+        excludeTestsMatching("com.cheroliv.capsule.scenarios.**")
+    }
+}
+
+sourceSets.test {
+    resources.srcDir("src/test/features")
+}
+
+val cucumberTest by tasks.registering(Test::class) {
+    description = "Runs Cucumber BDD tests"
+    group = "verification"
+    testClassesDirs = sourceSets.test.get().output.classesDirs
+    classpath = configurations.testRuntimeClasspath.get() +
+            sourceSets.test.get().output +
+            sourceSets.main.get().output +
+            files(tasks.jar.get().archiveFile)
+    dependsOn(tasks.classes)
+    useJUnitPlatform {
+        excludeEngines("junit-jupiter")
+    }
+    systemProperty("cucumber.junit-platform.naming-strategy", "long")
+    maxHeapSize = "1g"
+    maxParallelForks = 1
+    forkEvery = 1
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStandardStreams = true
+        exceptionFormat = FULL
+    }
+    outputs.upToDateWhen { false }
+}
+
+tasks.check {
+    dependsOn(cucumberTest)
 }
 
 kover {

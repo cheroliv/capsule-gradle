@@ -29,10 +29,10 @@ open class CapsuleExtension @Inject constructor(objects: ObjectFactory) {
         .convention(true)
 
     val outputDir: Property<String> = objects.property(String::class.java)
-        .convention("build/capsule")
+        .convention("capsule")
 
     val sliderScriptDir: Property<String> = objects.property(String::class.java)
-        .convention("build/capsule")
+        .convention("capsule")
 
     val viewportWidth: Property<Int> = objects.property(Int::class.java)
         .convention(1408)
@@ -47,5 +47,5 @@ open class CapsuleExtension @Inject constructor(objects: ObjectFactory) {
         .convention("")
 
     val deckSourceDir: Property<String> = objects.property(String::class.java)
-        .convention("build/docs/asciidocRevealJs")
+        .convention("docs/asciidocRevealJs")
 }

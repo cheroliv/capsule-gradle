@@ -1,0 +1,86 @@
+= Rapport Session 005 — CAP-4 CapsuleVideo orchestration + CAP-5 Cucumber BDD
+:date: 2026-05-16
+:score: 10/10
+
+== Objectifs
+
+- CAP-4 : CapsuleVideoTask orchestration complète
+  - Test @Tag("integration") PlaywrightCaptureImpl réel chromium + validation video
+  - Injection audio robuste — fallback séquentiel pour sections sans data-capsule-slide
+  - Multi-deck (2+ decks) verification
+- CAP-5 : Cucumber BDD
+  - Dépendances Cucumber (libs.versions.toml + build.gradle.kts)
+  - CucumberTestRunner (JUnit5 Suite)
+  - 5 scenarios Gherkin
+  - CapsuleStepDefinitions (GradleTestKit)
+  - cucumberTest task + intégration check
+
+== Réalisations
+
+=== CAP-4 — CapsuleVideoTask orchestration
+
+. *Injection audio fallback séquentiel* (`CapsuleManager.kt:injectAudioSequentialFallback`) :
+  ajout d'un parseur regex qui assigne séquentiellement les audios aux `<section>`
+  quand `data-capsule-slide` n'est pas présent dans le HTML.
+. *Multi-deck* : le code boucle déjà sur tous les scripts, donc les 2 decks sont
+  traités indépendamment. Test vérifie que 2 `.webm` distincts sont produits.
+. *Test @Tag("integration")* : exclu du `test` standard via `excludeTags("integration")`,
+  tâche `integrationTest` dédiée. Si chromium dispo, capture réelle avec Playwright +
+  validation taille > 0.
+. *NoOp TTS ↔ NoOp Playwright bridge* : `resolvePlaywrightCapture()` détecte
+  `ttsEngine == "noop"` et force `NoOpPlaywrightCapture()` pour éviter timeout
+  sur `audio-X.ended`.
+
+=== CAP-5 — Cucumber BDD
+
+. *Dépendances* : cucumber-java 7.34.3, cucumber-junit-platform-engine,
+  cucumber-picocontainer, junit-platform-suite 1.14.3. Bundle `cucumber` dans
+  libs.versions.toml.
+. *CucumberTestRunner* : @Suite + @IncludeEngines("cucumber") + configuration
+  annotations (GLUE, FEATURES, PLUGIN, FILTER_TAGS).
+. *5 scenarios Gherkin* (`src/test/features/capsule.feature`) :
+  - Generate a WebM capsule from a deck with capsule script
+  - NoOp fallback when Chromium is unavailable
+  - Sequential fallback for deck without data-capsule-slide attributes
+  - Multi-deck build produces separate videos
+  - Audio injection into deck HTML
+. *Step Definitions* : `CapsuleStepDefinitions.kt` avec GradleRunner + fixtures
+  vers les chemins conventionnels (`build/docs/asciidocRevealJs/`,
+  `build/capsule/`).
+. *cucumberTest task* : classpath complet (main + test + jar), `excludeEngines("junit-jupiter")`,
+  dépend de `classes`. Intégré dans `check`.
+
+=== Corrections conventions CapsuleExtension
+
+Les conventions contenaient `build/` en préfixe (`build/capsule`, `build/docs/...`)
+alors que les résolveurs les préfixent déjà avec `buildDirectory.dir()`.
+Corrigé en `capsule` et `docs/asciidocRevealJs`.
+
+== Fichiers modifiés
+
+|===
+| Fichier | Changement
+| `capsule-plugin/build.gradle.kts` | Dépendances Cucumber + cucumberTest + integrationTest + conventions révisées
+| `capsule-plugin/gradle/libs.versions.toml` | Versions cucumber + junit-platform + libraries + bundle
+| `capsule-plugin/src/main/kotlin/com/cheroliv/capsule/CapsuleModels.kt` | Conventions sans préfixe build/
+| `capsule-plugin/src/main/kotlin/com/cheroliv/capsule/CapsuleManager.kt` | injectAudioSequentialFallback + noop bridge
+| `capsule-plugin/src/test/kotlin/com/cheroliv/capsule/CapsulePluginTest.kt` | @Tag integration + fallback/multi-deck/chromium tests + imports
+|===
+
+Fichiers créés :
+- `src/test/features/capsule.feature`
+- `src/test/kotlin/com/cheroliv/capsule/scenarios/CucumberTestRunner.kt`
+- `src/test/kotlin/com/cheroliv/capsule/scenarios/CapsuleStepDefinitions.kt`
+
+== Résultats
+
+- `./gradlew test` : 23/23 PASS
+- `./gradlew cucumberTest` : 5/5 PASS (5 scenarios Cucumber)
+- `./gradlew compileKotlin` : OK
+- Secrets : 0 trouvé
+- Git : 5 modifiés, 2 dossiers untracked
+
+== Score
+
+10/10 — Objectifs CAP-4 et CAP-5 atteints, tous les tests passent,
+aucun secret, architecture cohérente avec slider-gradle/plantuml-gradle.

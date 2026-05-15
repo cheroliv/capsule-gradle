@@ -1,6 +1,7 @@
 package com.cheroliv.capsule
 
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.Test
@@ -106,13 +107,13 @@ class TtsEngineTest {
         assertEquals("fr_FR-siwis-medium", ext.ttsVoice.get())
         assertEquals("piper", ext.piperExecutablePath.get())
         assertEquals(true, ext.ttsFallbackEnabled.get())
-        assertEquals("build/capsule", ext.outputDir.get())
-        assertEquals("build/capsule", ext.sliderScriptDir.get())
+        assertEquals("capsule", ext.outputDir.get())
+        assertEquals("capsule", ext.sliderScriptDir.get())
         assertEquals(1408, ext.viewportWidth.get())
         assertEquals(792, ext.viewportHeight.get())
         assertEquals(120_000.0, ext.playwrightTimeout.get())
         assertEquals("", ext.chromiumExecutablePath.get())
-        assertEquals("build/docs/asciidocRevealJs", ext.deckSourceDir.get())
+        assertEquals("docs/asciidocRevealJs", ext.deckSourceDir.get())
     }
 }
 
@@ -244,5 +245,149 @@ Voici le contenu principal.
         val injectedDeck = java.io.File(injectedDir, "mon-cours-deck.html")
         assertTrue(injectedDeck.exists())
         assertTrue(injectedDeck.readText().contains("data-audio"))
+    }
+
+    @Test
+    fun `sequential fallback injects audio into sections without data-capsule-slide`() {
+        val deckDir = java.io.File(tempDir, "decks").also { it.mkdirs() }
+        val deckFile = java.io.File(deckDir, "cours-deck.html")
+        deckFile.writeText("""
+<html><body>
+<div class="reveal">
+  <div class="slides">
+    <section><h2>Slide 1</h2></section>
+    <section><h2>Slide 2</h2></section>
+    <section><h2>Slide 3</h2></section>
+  </div>
+</div>
+</body></html>
+        """.trimIndent())
+
+        val scriptDir = java.io.File(tempDir, "scripts").also { it.mkdirs() }
+        val scriptFile = java.io.File(scriptDir, "cours-script.txt")
+        scriptFile.writeText("""
+=== CAPSULE SCRIPT : cours ===
+--- SLIDE 1 : Slide 1 ---
+Contenu slide 1.
+--- SLIDE 2 : Slide 2 ---
+Contenu slide 2.
+--- SLIDE 3 : Slide 3 ---
+Contenu slide 3.
+        """.trimIndent())
+
+        val task = createTask(
+            deckDir,
+            scriptDir,
+            capture = NoOpPlaywrightCapture(),
+            engine = NoOpTtsEngine()
+        )
+        task.execute()
+
+        val injectedDir = java.io.File(tempDir, "build/capsule/injected")
+        assertTrue(injectedDir.exists())
+        val injectedDeck = java.io.File(injectedDir, "cours-deck.html")
+        assertTrue(injectedDeck.exists())
+        val injectedContent = injectedDeck.readText()
+        assertTrue(injectedContent.contains("data-audio"), "Should have audio attributes")
+        assertTrue(injectedContent.contains("sequential fallback"))
+        assertTrue(injectedContent.count { it == '\n' && injectedContent.contains("<section data-audio=") } >= 2)
+    }
+
+    @Test
+    fun `multi-deck build produces separate videos`() {
+        val deckDir = java.io.File(tempDir, "decks").also { it.mkdirs() }
+        val deck1 = java.io.File(deckDir, "cours-a-deck.html")
+        deck1.writeText("""
+<html><body>
+<div class="reveal">
+  <div class="slides">
+    <section data-capsule-slide="1"><h2>A1</h2></section>
+  </div>
+</div>
+</body></html>
+        """.trimIndent())
+        val deck2 = java.io.File(deckDir, "cours-b-deck.html")
+        deck2.writeText("""
+<html><body>
+<div class="reveal">
+  <div class="slides">
+    <section data-capsule-slide="1"><h2>B1</h2></section>
+  </div>
+</div>
+</body></html>
+        """.trimIndent())
+
+        val scriptDir = java.io.File(tempDir, "scripts").also { it.mkdirs() }
+        java.io.File(scriptDir, "cours-a-script.txt").writeText("""
+=== CAPSULE SCRIPT : cours-a ===
+--- SLIDE 1 : A1 ---
+Deck A.
+        """.trimIndent())
+        java.io.File(scriptDir, "cours-b-script.txt").writeText("""
+=== CAPSULE SCRIPT : cours-b ===
+--- SLIDE 1 : B1 ---
+Deck B.
+        """.trimIndent())
+
+        val task = createTask(
+            deckDir,
+            scriptDir,
+            capture = NoOpPlaywrightCapture(),
+            engine = NoOpTtsEngine()
+        )
+        task.execute()
+
+        val capDir = java.io.File(tempDir, "build/capsule")
+        val videoA = java.io.File(capDir, "cours-a.webm")
+        val videoB = java.io.File(capDir, "cours-b.webm")
+        assertTrue(videoA.exists(), "Expected video for cours-a")
+        assertTrue(videoB.exists(), "Expected video for cours-b")
+        assertTrue(videoA.readText().contains("PLAYWRIGHT CAPTURE PLACEHOLDER"))
+        assertTrue(videoB.readText().contains("PLAYWRIGHT CAPTURE PLACEHOLDER"))
+    }
+
+    @Test
+    @Tag("integration")
+    fun `playwright capture produces valid webm when chromium available`() {
+        val impl = PlaywrightCaptureImpl()
+        if (!impl.isAvailable()) {
+            return
+        }
+
+        val deckDir = java.io.File(tempDir, "integration-decks").also { it.mkdirs() }
+        val deckFile = java.io.File(deckDir, "test-deck.html")
+        deckFile.writeText("""
+<html><head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+</head><body>
+<div class="reveal">
+  <div class="slides">
+    <section data-capsule-slide="1"><h2>Slide 1</h2></section>
+    <section data-capsule-slide="2"><h2>Slide 2</h2></section>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+  Reveal.initialize({ autoSlide: 500, autoSlideStoppable: false });
+</script>
+</body></html>
+        """.trimIndent())
+
+        val outputDir = java.io.File(tempDir, "integration-video").also { it.mkdirs() }
+
+        try {
+            impl.capture(deckFile.absolutePath, outputDir, 1408, 792, 2)
+            impl.close()
+
+            val videoFiles = outputDir.listFiles { f -> f.name.endsWith(".webm") }
+            assertNotNull(videoFiles)
+            assertTrue(videoFiles.isNotEmpty(), "Should produce a webm video file")
+            val video = videoFiles.first()
+            assertTrue(video.length() > 0, "Video file should have non-zero size")
+        } catch (e: CapturingException) {
+            impl.close()
+            throw e
+        }
     }
 }

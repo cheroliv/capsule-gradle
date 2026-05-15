@@ -298,6 +298,11 @@ open class CapsuleVideoTask : DefaultTask() {
     private fun resolvePlaywrightCapture(): PlaywrightCapture {
         if (playwrightCapture != null) return playwrightCapture!!
 
+        if (capsuleExtension.ttsEngine.get().lowercase() == "noop") {
+            logger.lifecycle("TTS engine is noop — using noop capture fallback")
+            return NoOpPlaywrightCapture()
+        }
+
         val impl = PlaywrightCaptureImpl(
             timeout = capsuleExtension.playwrightTimeout.get(),
         )
@@ -411,6 +416,8 @@ open class CapsuleVideoTask : DefaultTask() {
         val injectedDir = project.layout.buildDirectory.dir("capsule/injected").get().asFile
         injectedDir.mkdirs()
 
+        val hasDataCapsuleSlide = originalHtml.contains("data-capsule-slide=")
+
         val injectedHtml = originalHtml.lines().map { line ->
             if (line.contains("<section") && !line.contains("</section>")) {
                 var mutableLine = line
@@ -431,12 +438,90 @@ open class CapsuleVideoTask : DefaultTask() {
             }
         }.joinToString("\n")
 
+        if (!hasDataCapsuleSlide) {
+            return injectAudioSequentialFallback(deckFile, script, audioDir, injectedDir)
+        }
+
         val audioScriptInject = """
 <!-- CAPSULE-GRADLE: Autoplay audio injection -->
 <script>
 (function() {
   var currentAudio = null;
   var currentIndex = -1;
+  var sections = document.querySelectorAll('.reveal .slides section[data-audio]');
+  var audios = [];
+  sections.forEach(function(sec) {
+    var src = sec.getAttribute('data-audio');
+    if (src) {
+      var audio = new Audio(src.replace('file://', ''));
+      audio.id = 'audio-' + audios.length;
+      document.body.appendChild(audio);
+      audios.push(audio);
+    }
+  });
+  function playSlideAudio(idx) {
+    if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+    currentAudio = audios[idx];
+    if (currentAudio) {
+      currentAudio.currentTime = 0;
+      currentAudio.play().catch(function(e) { console.warn('Audio play failed:', e); });
+    }
+  }
+  if (typeof Reveal !== 'undefined') {
+    Reveal.on('slidechanged', function(event) {
+      playSlideAudio(event.indexh);
+    });
+    if (audios.length > 0) playSlideAudio(0);
+  }
+})();
+</script>
+"""
+
+        val injected = injectedHtml.replace(
+            "</body>",
+            "$audioScriptInject</body>"
+        )
+
+        val outFile = injectedDir.resolve(deckFile.name)
+        outFile.writeText(injected)
+        return outFile
+    }
+
+    private fun injectAudioSequentialFallback(
+        deckFile: File,
+        script: CapsuleScript,
+        audioDir: File,
+        injectedDir: File
+    ): File {
+        val originalHtml = deckFile.readText()
+
+        val slideRegex = Regex("""<section\b[^>]*>""")
+        val sections = slideRegex.findAll(originalHtml).toList()
+
+        val injectedHtml = buildString {
+            var lastEnd = 0
+            var slideIdx = 0
+            for (match in sections) {
+                append(originalHtml.substring(lastEnd, match.range.first))
+                var tag = match.value
+                if (slideIdx < script.slides.size) {
+                    val seg = script.slides[slideIdx]
+                    val idx = String.format("%02d", seg.index)
+                    val audioPath = audioDir.resolve("slide-$idx.mp3").absolutePath
+                    tag = tag.replace("<section", "<section data-audio=\"file://$audioPath\"")
+                }
+                append(tag)
+                lastEnd = match.range.last + 1
+                slideIdx++
+            }
+            append(originalHtml.substring(lastEnd))
+        }
+
+        val audioScriptInject = """
+<!-- CAPSULE-GRADLE: Autoplay audio injection (sequential fallback) -->
+<script>
+(function() {
+  var currentAudio = null;
   var sections = document.querySelectorAll('.reveal .slides section[data-audio]');
   var audios = [];
   sections.forEach(function(sec) {

@@ -6,6 +6,7 @@ _Date creation_ : 2026-05-14
 
 |===
 | # | Date | Type | Sujet | Score
+| 005 | 2026-05-16 | dev | CAP-4 CapsuleVideo orchestration (sequential fallback, multi-deck, noop bridge, @Tag integration chromium) + CAP-5 Cucumber BDD (5 scenarios, cucumberTest task, 28/28 PASS) | 10/10
 | 004 | 2026-05-15 | dev | CAP-3 — Playwright Java (PlaywrightCapture interface/Impl/NoOp, capsulevideo task, injectAudio HTML, Kover 0.9.1, 19/19 PASS) | 10/10
 | 003 | 2026-05-15 | dev | CAP-2 — TTS Piper (TtsEngine interface, PiperTtsEngine CLI, NoOpTtsEngine fallback, 11/11 PASS) | 10/10
 | 002 | 2026-05-15 | dev | CAP-1 — Plugin Gradle capsule (compileOnly slider, 2 taches, CapsuleExtension DSL, 5/5 PASS) | 10/10

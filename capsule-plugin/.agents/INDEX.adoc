@@ -5,9 +5,9 @@ _Regles absolues_ : voir `AGENT.adoc`
 _DAG_ : N2 — Plugin Gradle de generation de capsules video
 _Dependance N2_ : slider-gradle (compileOnly)
 
-_Derniere mise a jour_ : 2026-05-15
-_Session terminee_ : 004 — CAP-3 Playwright Java (19/19 PASS, Kover 0.9.1)
-_Session en cours_ : 005 — CAP-4 CapsuleVideo orchestration + CAP-5 Cucumber BDD
+_Derniere mise a jour_ : 2026-05-16
+_Session terminee_ : 005 — CAP-4 CapsuleVideo orchestration + CAP-5 Cucumber BDD (28/28 PASS)
+_Session en cours_ : 006 — CAP-6 Integrations N3 + CAP-7 capsuleDistrib FFmpeg
 
 '''
 == REGLES ABSOLUES (resume)
@@ -25,6 +25,7 @@ _Session en cours_ : 005 — CAP-4 CapsuleVideo orchestration + CAP-5 Cucumber B
 
 |===
 | # | Date | Type | Sujet | Score
+| 005 | 2026-05-16 | dev | CAP-4 CapsuleVideo orchestration (sequential fallback, multi-deck, noop bridge, @Tag integration chromium) + CAP-5 Cucumber BDD (5 scenarios Gherkin, cucumberTest task, 28/28 PASS) | 10/10
 | 004 | 2026-05-15 | dev | CAP-3 — Playwright Java capture (PlaywrightCapture interface/Impl/NoOp, capsulevideo task, injectAudio HTML, Kover 0.9.1, 19/19 PASS) | 10/10
 | 003 | 2026-05-15 | dev | CAP-2 — Intégration TTS Piper (TtsEngine interface, PiperTtsEngine CLI réel, NoOpTtsEngine fallback, 11/11 PASS) | 10/10
 | 002 | 2026-05-15 | dev | CAP-1 — Plugin Gradle capsule (compileOnly slider, 2 taches capsulescript+capsulebuild, CapsuleExtension DSL, 5/5 PASS) | 10/10
@@ -41,8 +42,8 @@ _Session en cours_ : 005 — CAP-4 CapsuleVideo orchestration + CAP-5 Cucumber B
 | CAP-1 | Plugin Gradle `capsule` — structure Kotlin, compileOnly slider, taches de base | ✅ TERMINE (session 002) | P0
 | CAP-2 | TTS integration — Piper ou API externe, generation MP3 par slide | ✅ TERMINE (session 003) | P1
 | CAP-3 | Playwright Java capture — pilotage reveal.js + API JVM native + injectAudio HTML | ✅ TERMINE (session 004) | P1
-| CAP-4 | CapsuleVideo task — orchestration TTS + Playwright → livrable unique | 🔲 A VENIR | P1
-| CAP-5 | Tests — Cucumber BDD + fonctionnels + unitaires | 🔲 A VENIR | P2
+| CAP-4 | CapsuleVideo task — orchestration TTS + Playwright → livrable video unique | ✅ TERMINE (session 005) | P1
+| CAP-5 | Tests — Cucumber BDD + fonctionnels + unitaires (GradleTestKit) | ✅ TERMINE (session 005) | P2
 | CAP-6 | Integrations N3 — export composite-context pour engine | 🔲 A VENIR | P3
 |===
 

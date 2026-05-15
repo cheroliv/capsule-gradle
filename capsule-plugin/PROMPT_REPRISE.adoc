@@ -1,37 +1,34 @@
-= PROMPT_REPRISE — capsule-gradle Session 005
+= PROMPT_REPRISE — capsule-gradle Session 006
 
-_Mission_ : EPIC CAP-4 — CapsuleVideoTask orchestration complète + CAP-5 Cucumber BDD
+_Mission_ : EPIC CAP-6 — Integrations N3 (export composite-context pour engine) + CAP-7 capsuleDistrib FFmpeg
 _Statut_ : A FAIRE
 _Date_ : à définir
 
 == Contexte
 
-Session 004 TERMINE — CAP-3 Playwright Java (19/19 PASS) :
-- PlaywrightCapture interface + PlaywrightCaptureImpl + NoOpPlaywrightCapture
-- capsulevideo task : dépend de capsulebuild, injecte audio HTML, capture NoOp
-- CapsuleExtension : +playwrightTimeout, +chromiumExecutablePath, +deckSourceDir
-- Kover 0.9.1 dans check
+Session 005 TERMINE (28/28 PASS — 23 unit + 5 Cucumber) :
+- CAP-4 : CapsuleVideoTask avec fallback séquentiel audio (sections sans data-capsule-slide),
+  multi-deck (2+ decks), bridge noop TTS↔noop Playwright, test @Tag("integration") chromium
+- CAP-5 : Cucumber BDD (5 scenarios, GradleTestKit, cucumberTest task intégrée à check)
+- Conventions CapsuleExtension corrigées (sans préfixe build/)
 
-== Sujets Session 005
+== Sujets Session 006
 
-- CAP-4 : CapsuleVideoTask avec PlaywrightCaptureImpl réel (chromium headless)
-  - Test @Tag("integration") — si chromium dispo, capture réelle
-  - Validation video produite (durée > 0, taille > 0)
-- CAP-5 : Cucumber BDD scénarios
-  - Feature: Génération capsule video depuis deck reveal.js
-  - Given un deck HTML avec sections et un script capsule
-  - When la tâche capsulevideo est exécutée
-  - Then une video WebM est générée avec audio synchronisé
-  - Given Chromium n'est pas disponible
-  - Then le fallback noop est utilisé sans erreur
-- capsuleDistrib (CAP-6 amorce) — recadrage TikTok FFmpeg 9:16
-- PlaywrightCaptureImpl multi-deck (2+ decks dans même build)
-- Injection audio robuste : support section[data-capsule-slide] et fallback séquentiel
+- CAP-6 : Integrations N3 — export composite-context pour engine
+  - capsuleCompositeContext task qui exporte le contexte (deck HTML + scripts + vidéos)
+    dans un fichier JSON composite-context.json compatible N3 engine
+  - Format standardisé (même structure que codebase/plantuml/slider)
+- CAP-7 : capsuleDistrib — FFmpeg recadrage TikTok 9:16
+  - capsuleDistrib task qui recadre capsule.webm en format vertical 9:16
+  - Support multi-deck (un output par deck)
+  - Paramétrage crop: centre, scale, pad
+  - Upload vers YouTube/Dailymotion/PeerTube × 17 langues (CAP-8 amorce)
 
 == Architecture rappel
 
 Pipeline complet :
   AsciiDoc → slider-gradle → deck reveal.js + *-script.txt
-  → capsulescript (lecture) → capsulebuild (TTS Piper/NoOp)
-  → capsulevideo (injection audio HTML → Playwright Java capture → capsule.webm)
-  → capsuleDistrib (FFmpeg crop TikTok + upload YouTube/Dailymotion/PeerTube × 17 langues)
+  → capsulescript → capsulebuild (TTS Piper/NoOp)
+  → capsulevideo (injection audio HTML → capture → capsule.webm)
+  → capsuleDistrib (FFmpeg crop TikTok + upload plateformes × 17 langues)
+  → capsuleCompositeContext (export JSON → engine N3)

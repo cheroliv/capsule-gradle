@@ -3,14 +3,20 @@ capsule = "0.0.1"
 slider = "0.0.6"
 kotlin = "2.3.20"
 junit-platform-launcher = "1.10.2"
+junit-platform = "1.14.3"
 playwright = "1.52.0"
 kover = "0.9.1"
+cucumber = "7.34.3"
 
 [libraries]
 kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5", version.ref = "kotlin" }
 kotlin-stdlib-jdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8" }
 slider = { group = "com.cheroliv", name = "slider", version.ref = "slider" }
 playwright = { group = "com.microsoft.playwright", name = "playwright", version.ref = "playwright" }
+cucumber-java = { module = "io.cucumber:cucumber-java", version.ref = "cucumber" }
+cucumber-junit-platform-engine = { module = "io.cucumber:cucumber-junit-platform-engine", version.ref = "cucumber" }
+cucumber-picocontainer = { module = "io.cucumber:cucumber-picocontainer", version.ref = "cucumber" }
+junit-platform-suite = { module = "org.junit.platform:junit-platform-suite", version.ref = "junit-platform" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -18,3 +24,9 @@ capsule = { id = "com.cheroliv.capsule", version.ref = "capsule" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 
 [bundles]
+cucumber = [
+    "cucumber-java",
+    "cucumber-junit-platform-engine",
+    "cucumber-picocontainer",
+    "junit-platform-suite",
+]
