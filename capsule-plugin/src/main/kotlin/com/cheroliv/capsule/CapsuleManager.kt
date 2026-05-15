@@ -3,10 +3,13 @@ package com.cheroliv.capsule
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.tasks.Input
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.File
 
 class CapsuleManager(private val project: Project) {
@@ -19,6 +22,7 @@ class CapsuleManager(private val project: Project) {
         project.registerCapsuleVideoTask()
         project.registerCapsuleDistribTask()
         project.registerCapsuleCompositeContextTask()
+        project.registerCapsuleParseContextTask()
     }
 
     private fun Project.registerCapsuleScriptTask() {
@@ -62,6 +66,31 @@ class CapsuleManager(private val project: Project) {
             task.description = "Exporte le contexte des capsules (chemins videos + metadonnees) en JSON compatible engine N3"
             task.dependsOn("capsuledistrib")
             task.capsuleExtension = this@CapsuleManager.capsuleExt
+        }
+    }
+
+    private fun Project.registerCapsuleParseContextTask() {
+        tasks.register("capsuleparsecontext", CapsuleParseContextTask::class.java) { task ->
+            task.group = "capsule"
+            task.description = "Parse le fichier capsule-context.json et retourne une liste de decks"
+            task.contextFile.convention(
+                project.layout.buildDirectory.file("capsule/capsule-context.json")
+            )
+            task.outputFile.convention(
+                project.layout.buildDirectory.file("capsule/capsule-parse-results.json")
+            )
+        }
+
+        tasks.register("capsuleretrieve", CapsuleParseContextTask::class.java) { task ->
+            task.group = "capsule"
+            task.description = "Retrieve capsule decks from capsule-context.json (N3 engine contract)"
+            val outputFile = project.findProperty("outputFile") as? String
+            if (outputFile != null) {
+                task.outputFile.set(File(outputFile))
+            }
+            task.contextFile.convention(
+                project.layout.buildDirectory.file("capsule/capsule-context.json")
+            )
         }
     }
 
@@ -660,6 +689,14 @@ open class CapsuleDistribTask : DefaultTask() {
 
         for (video in videos) {
             val outputFile = distDir.resolve(video.name)
+
+            if (!isValidWebM(video)) {
+                logger.lifecycle("DISTRIB → {} (placeholder, copy as-is)", video.name)
+                video.copyTo(outputFile, overwrite = true)
+                logger.lifecycle("  COPY → {}", outputFile.absolutePath)
+                continue
+            }
+
             logger.lifecycle("DISTRIB → {} (crop {}x{})", video.name, targetWidth, targetHeight)
 
             try {
@@ -701,6 +738,19 @@ open class CapsuleDistribTask : DefaultTask() {
                 .start()
             proc.waitFor()
             proc.exitValue() == 0
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private val webmSignature = byteArrayOf(0x1a.toByte(), 0x45.toByte(), 0xdf.toByte(), 0xa3.toByte())
+
+    private fun isValidWebM(file: File): Boolean {
+        if (file.length() < 4) return false
+        return try {
+            val header = ByteArray(4)
+            file.inputStream().use { it.read(header) }
+            header.contentEquals(webmSignature)
         } catch (e: Exception) {
             false
         }
@@ -835,5 +885,51 @@ open class CapsuleCompositeContextTask : DefaultTask() {
             .replace("\n", "\\n")
             .replace("\r", "\\r")
             .replace("\t", "\\t")
+    }
+}
+
+@org.gradle.work.DisableCachingByDefault(because = "Filesystem-bound: reads capsule context JSON and writes parsed results")
+open class CapsuleParseContextTask : DefaultTask() {
+
+    @get:org.gradle.api.tasks.Internal
+    val contextFile: RegularFileProperty = project.objects.fileProperty()
+
+    @get:OutputFile
+    val outputFile: RegularFileProperty = project.objects.fileProperty()
+
+    @TaskAction
+    fun execute() {
+        val input = contextFile.asFile.get()
+        val output = outputFile.asFile.get()
+        output.parentFile.mkdirs()
+
+        if (!input.exists()) {
+            logger.warn("capsule-context.json not found at {}, returning empty list", input.absolutePath)
+            val mapper = jacksonObjectMapper()
+            mapper.writerWithDefaultPrettyPrinter().writeValue(output, emptyList<Map<String, Any>>())
+            logger.lifecycle("CAPSULE PARSE CONTEXT -> {} (0 decks, no input file)", output.absolutePath)
+            return
+        }
+
+        val mapper = jacksonObjectMapper()
+        val root: Map<String, Any> = mapper.readValue(input)
+
+        @Suppress("UNCHECKED_CAST")
+        val entries = root["entries"] as? List<Map<String, Any>> ?: emptyList()
+
+        val results = entries.map { entry ->
+            mapOf<String, Any>(
+                "source" to "capsule",
+                "deckName" to (entry["deckName"]?.toString() ?: ""),
+                "slideCount" to ((entry["slideCount"] as? Number)?.toInt() ?: 0),
+                "originalVideo" to (entry["originalVideo"]?.toString() ?: ""),
+                "distribVideo" to (entry["distribVideo"]?.toString() ?: ""),
+                "ttsEngine" to (entry["ttsEngine"]?.toString() ?: ""),
+                "ttsVoice" to (entry["ttsVoice"]?.toString() ?: "")
+            )
+        }
+
+        mapper.writerWithDefaultPrettyPrinter().writeValue(output, results)
+        logger.lifecycle("CAPSULE PARSE CONTEXT -> {} ({} decks)", output.absolutePath, results.size)
     }
 }

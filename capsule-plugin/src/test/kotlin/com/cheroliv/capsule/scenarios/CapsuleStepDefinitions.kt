@@ -104,6 +104,15 @@ $slides
 
     @When("I run the task {string} with NoOp capture")
     fun iRunTheTaskWithNoOpCapture(taskName: String) {
+        runTask(taskName)
+    }
+
+    @When("I run the task {string}")
+    fun iRunTheTask(taskName: String) {
+        runTask(taskName)
+    }
+
+    private fun runTask(taskName: String) {
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
@@ -165,5 +174,37 @@ $slides
         assertTrue(injectedFiles.isNotEmpty(), "Should have injected deck files")
         val content = injectedFiles.first().readText()
         assertTrue(content.contains(expected), "Should contain $expected")
+    }
+
+    @Then("the parsed output contains {string}")
+    fun theParsedOutputContains(expected: String) {
+        val outputFile = projectDir.resolve("build/capsule/capsule-parse-results.json")
+        if (!outputFile.exists()) {
+            val legacy = projectDir.resolve("build/capsule/retrieve-results.json")
+            if (legacy.exists()) {
+                assertTrue(legacy.readText().contains(expected), "Should contain $expected in retrieve-results.json")
+                return
+            }
+        }
+        assertTrue(outputFile.exists(), "Output file should exist")
+        assertTrue(outputFile.readText().contains(expected), "Should contain $expected")
+    }
+
+    @Then("the parsed output is a valid JSON array")
+    fun theParsedOutputIsAValidJsonArray() {
+        val outputFile = projectDir.resolve("build/capsule/capsule-parse-results.json")
+        if (!outputFile.exists()) {
+            val legacy = projectDir.resolve("build/capsule/retrieve-results.json")
+            if (legacy.exists()) {
+                val content = legacy.readText().trim()
+                assertTrue(content.startsWith("["), "Should start with [")
+                assertTrue(content.endsWith("]"), "Should end with ]")
+                return
+            }
+        }
+        assertTrue(outputFile.exists(), "Output file should exist")
+        val content = outputFile.readText().trim()
+        assertTrue(content.startsWith("["), "Should start with [")
+        assertTrue(content.endsWith("]"), "Should end with ]")
     }
 }

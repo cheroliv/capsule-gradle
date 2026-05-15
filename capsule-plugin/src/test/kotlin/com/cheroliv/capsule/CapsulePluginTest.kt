@@ -573,3 +573,96 @@ Note.
         assertTrue(content.contains("distrib"))
     }
 }
+
+class CapsuleParseContextTaskTest {
+
+    @TempDir
+    lateinit var tempDir: java.io.File
+
+    private fun createTask(
+        contextJsonFile: java.io.File,
+        outputFile: java.io.File
+    ): CapsuleParseContextTask {
+        val project = ProjectBuilder.builder().withProjectDir(tempDir).build()
+        val t = project.tasks.register("capsuleparsecontext", CapsuleParseContextTask::class.java).get()
+        t.contextFile.set(contextJsonFile)
+        t.outputFile.set(outputFile)
+        return t
+    }
+
+    @Test
+    fun `parses capsule-context json and outputs list of maps`() {
+        val contextFile = java.io.File(tempDir, "capsule-context.json")
+        contextFile.writeText("""
+{
+  "source": "capsule",
+  "version": "0.1.0",
+  "entries": [
+    {
+      "source": "capsule",
+      "deckName": "mon-cours",
+      "slideCount": 2,
+      "originalVideo": "/build/capsule/mon-cours.webm",
+      "distribVideo": "/build/capsule/distrib/mon-cours.webm",
+      "viewport": { "width": 1408, "height": 792 },
+      "distribDimensions": { "width": 1080, "height": 1920 },
+      "slides": [
+        { "index": 1, "title": "Intro", "speakerNoteLength": 50 },
+        { "index": 2, "title": "Content", "speakerNoteLength": 80 }
+      ],
+      "ttsEngine": "piper",
+      "ttsVoice": "fr_FR-siwis-medium"
+    }
+  ],
+  "timestamp": 1234567890
+}
+        """.trimIndent())
+
+        val outputFile = java.io.File(tempDir, "parsed-results.json")
+
+        val task = createTask(contextFile, outputFile)
+        task.execute()
+
+        assertTrue(outputFile.exists(), "Output file should be created")
+        val content = outputFile.readText()
+        assertTrue(content.contains("mon-cours"), "Should contain deck name")
+        assertTrue(content.contains("capsule"), "Should contain source=capsule")
+        assertTrue(content.contains("originalVideo"), "Should contain originalVideo path")
+        assertTrue(content.contains("slideCount"), "Should contain slideCount")
+    }
+
+    @Test
+    fun `returns empty list when no entries`() {
+        val contextFile = java.io.File(tempDir, "capsule-context.json")
+        contextFile.writeText("""
+{
+  "source": "capsule",
+  "version": "0.1.0",
+  "entries": [],
+  "timestamp": 1234567890
+}
+        """.trimIndent())
+
+        val outputFile = java.io.File(tempDir, "parsed-results.json")
+
+        val task = createTask(contextFile, outputFile)
+        task.execute()
+
+        assertTrue(outputFile.exists())
+        val content = outputFile.readText()
+        assertTrue(content.contains("[]") || content.contains("[ ]"))
+    }
+
+    @Test
+    fun `handles missing file gracefully`() {
+        val contextFile = java.io.File(tempDir, "nonexistent.json")
+        val outputFile = java.io.File(tempDir, "parsed-results.json")
+
+        val task = createTask(contextFile, outputFile)
+        task.execute()
+
+        assertTrue(outputFile.exists())
+        val content = outputFile.readText()
+        assertTrue(content.contains("[]") || content.contains("[ ]"))
+    }
+}

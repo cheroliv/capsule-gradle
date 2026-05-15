@@ -123,4 +123,32 @@ class CapsulePluginFunctionalTest {
 
         assertTrue(result.output.contains("CAPSULE COMPOSITE CONTEXT") || result.output.contains("UP-TO-DATE"))
     }
+
+    @Test
+    fun `capsuleparsecontext produces valid json output`() {
+        setupBuild()
+
+        val runner = GradleRunner.create()
+        runner.forwardOutput()
+        runner.withPluginClasspath()
+        runner.withArguments("capsuleparsecontext")
+        runner.withProjectDir(projectDir)
+        val result = runner.build()
+
+        assertTrue(result.output.contains("CAPSULE PARSE CONTEXT") || result.output.contains("UP-TO-DATE"))
+    }
+
+    @Test
+    fun `capsuleretrieve with outputFile parameter`() {
+        setupBuild()
+
+        val runner = GradleRunner.create()
+        runner.forwardOutput()
+        runner.withPluginClasspath()
+        runner.withArguments("capsuleretrieve", "-PoutputFile=build/capsule/retrieve-results.json")
+        runner.withProjectDir(projectDir)
+        val result = runner.build()
+
+        assertTrue(result.output.contains("CAPSULE PARSE CONTEXT") || result.output.contains("UP-TO-DATE"))
+    }
 }

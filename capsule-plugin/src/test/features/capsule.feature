@@ -42,3 +42,14 @@ Feature: Capsule video generation from a reveal.js deck
     When I run the task "capsulevideo" with NoOp capture
     Then the injected deck HTML contains "data-audio" attributes
     And the injected deck contains the "CAPSULE-GRADLE" autoplay script
+
+  Scenario: Composite context JSON is parsed for engine N3 contract
+    Given a reveal.js deck "ctx-deck.html" with 2 slides and data-capsule-slide attributes
+    And a capsule script "ctx-script.txt" with 2 slide segments
+    When I run the task "capsulevideo" with NoOp capture
+    And I run the task "capsuledistrib"
+    And I run the task "capsulecompositecontext"
+    And I run the task "capsuleparsecontext"
+    Then the parsed output contains "deckName"
+    And the parsed output contains "originalVideo"
+    And the parsed output is a valid JSON array
