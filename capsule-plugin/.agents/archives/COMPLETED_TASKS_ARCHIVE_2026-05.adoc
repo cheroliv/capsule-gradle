@@ -3,6 +3,10 @@
 
 |===
 | Date | Session | Tâche | Résultat
-| 2026-05-14 | bootstrap | CAP-0.1 — Gouvernance agent capsule | ✅ 7 fichiers gouvernance (.agents/ + AGENT.adoc)
+| 2026-05-15 | 004-dev | CAP-3 — Playwright Java capture | ✅ PlaywrightCapture interface/Impl/NoOp, capsulevideo task (dépend de capsulebuild), injectAudio HTML + script autoplay, CapsuleExtension +3 props (playwrightTimeout/chromiumExec/deckSource), Kover 0.9.1 XML+HTML dans check, 19/19 PASS
+| 2026-05-15 | 003-dev | CAP-2 — Intégration TTS Piper | ✅ TtsEngine interface, PiperTtsEngine CLI (ProcessBuilder stdin), NoOpTtsEngine fallback, CapsuleBuildTask refactor, 11/11 PASS, check OK
+| 2026-05-15 | 002-dev | CAP-1 — Plugin Gradle capsule | ✅ compileOnly slider 0.0.6, 2 taches (capsulescript+capsulebuild), CapsuleExtension DSL, Kotlin 2.3.20, 5/5 PASS, check OK
+| 2026-05-15 | 001-build | CAP-0.3 — Structure Gradle (root + plugin) | ✅ settings/buil/lib.versions root + plugin, CapsulePlugin stub, wrapper 9.5.0, compile OK, 2/2 PASS, publishToMavenLocal
 | 2026-05-14 | bootstrap | CAP-0.2 — Cadrage architecture pipeline capsule | ✅ 310 lignes, 4 diagrammes PlantUML, decisions techniques
+| 2026-05-14 | bootstrap | CAP-0.1 — Gouvernance agent capsule | ✅ 7 fichiers gouvernance (.agents/ + AGENT.adoc)
 |===

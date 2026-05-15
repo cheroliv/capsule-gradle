@@ -1,0 +1,37 @@
+= PROMPT_REPRISE — capsule-gradle Session 005
+
+_Mission_ : EPIC CAP-4 — CapsuleVideoTask orchestration complète + CAP-5 Cucumber BDD
+_Statut_ : A FAIRE
+_Date_ : à définir
+
+== Contexte
+
+Session 004 TERMINE — CAP-3 Playwright Java (19/19 PASS) :
+- PlaywrightCapture interface + PlaywrightCaptureImpl + NoOpPlaywrightCapture
+- capsulevideo task : dépend de capsulebuild, injecte audio HTML, capture NoOp
+- CapsuleExtension : +playwrightTimeout, +chromiumExecutablePath, +deckSourceDir
+- Kover 0.9.1 dans check
+
+== Sujets Session 005
+
+- CAP-4 : CapsuleVideoTask avec PlaywrightCaptureImpl réel (chromium headless)
+  - Test @Tag("integration") — si chromium dispo, capture réelle
+  - Validation video produite (durée > 0, taille > 0)
+- CAP-5 : Cucumber BDD scénarios
+  - Feature: Génération capsule video depuis deck reveal.js
+  - Given un deck HTML avec sections et un script capsule
+  - When la tâche capsulevideo est exécutée
+  - Then une video WebM est générée avec audio synchronisé
+  - Given Chromium n'est pas disponible
+  - Then le fallback noop est utilisé sans erreur
+- capsuleDistrib (CAP-6 amorce) — recadrage TikTok FFmpeg 9:16
+- PlaywrightCaptureImpl multi-deck (2+ decks dans même build)
+- Injection audio robuste : support section[data-capsule-slide] et fallback séquentiel
+
+== Architecture rappel
+
+Pipeline complet :
+  AsciiDoc → slider-gradle → deck reveal.js + *-script.txt
+  → capsulescript (lecture) → capsulebuild (TTS Piper/NoOp)
+  → capsulevideo (injection audio HTML → Playwright Java capture → capsule.webm)
+  → capsuleDistrib (FFmpeg crop TikTok + upload YouTube/Dailymotion/PeerTube × 17 langues)

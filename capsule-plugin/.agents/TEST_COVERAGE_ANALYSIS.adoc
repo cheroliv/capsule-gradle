@@ -1,0 +1,20 @@
+= TEST_COVERAGE_ANALYSIS — capsule-gradle
+:date: 2026-05-15
+:session: 004 CAP-3
+
+== Couverture — 15 mai 2026 (après session 004)
+
+|===
+| Classe | Type | Tests | Couverture
+| CapsulePlugin.kt | main | 4 unitaires | Enregistrement extension + capsulescript + capsulebuild + capsulevideo
+| CapsuleModels.kt | main | 1 unitaire | Valeurs par défaut de CapsuleExtension (11 propriétés)
+| CapsuleManager.kt | main | 4 fonctionnels | capsulescript (lecture scripts), capsulebuild dependsOn, capsulebuild noop, capsulevideo
+| TtsManager.kt | main | 4 unitaires | NoOpTtsEngine synthesize/mkdirs/availability, PiperTtsEngine unavailable/exception
+| PlaywrightManager.kt | main | 3 unitaires | NoOpPlaywrightCapture placeholder/mkdirs/close
+| CapsuleManager.kt (CapsuleVideoTask) | main | 3 unitaires | empty deck warn, empty script warn, e2e NoOp capture + injectAudio
+|===
+
+- Unitaires: 15 PASS (4 registration + 5 TtsEngine + 3 NoOpPlaywrightCapture + 3 CapsuleVideoTask)
+- Fonctionnels: 4 PASS (2 capsulescript/capsulebuild + 1 noop + 1 capsulevideo)
+- Total: 19/19 PASS
+- Kover: intégré dans check (HTML + XML)

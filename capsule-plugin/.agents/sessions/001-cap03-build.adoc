@@ -1,0 +1,60 @@
+= Session 001 — CAP-0.3 Initialisation Projet Gradle
+:date: 2026-05-15
+:type: build
+:sujet: CAP-0.3 — Structure Gradle (root consommateur + capsule-plugin indépendant)
+:score: 10/10
+
+== Contexte
+
+Session 000 avait bootstrapé gouvernance (AGENT, INDEX, SESSION_CHECKLIST, SESSION_PROCEDURE)
+et cadrage architecture (doc/CAPSULE_ARCHITECTURE.adoc). Aucun build Gradle existant.
+
+== Actions
+
+=== Root consommateur (capsule-gradle/)
+- settings.gradle.kts — pluginManagement mavenLocal + GradlePortal, rootProject.name = "capsule-gradle"
+- build.gradle.kts — 3 lignes : plugins { alias(libs.plugins.capsule) + alias(libs.plugins.readme) }
+- gradle/libs.versions.toml — catalogue minimal (capsule 0.0.1 + readme 0.0.0)
+
+=== capsule-plugin/ (build indépendant)
+- settings.gradle.kts — foojay-resolver-convention, rootProject.name = "capsule-plugin"
+- build.gradle.kts — java-gradle-plugin + maven-publish + signing + kotlin.jvm + test/functionalTest + pom
+- gradle/libs.versions.toml — kotlin 2.2.20, Junit, Gradle 9.3.1
+- gradle/wrapper — Gradle 9.5.0
+- .gitignore — .gradle/ build/
+
+=== Code source
+- CapsulePlugin.kt — stub greeting task (groupe "capsule")
+- CapsulePluginTest.kt — TestKit registration test
+- CapsulePluginFunctionalTest.kt — end-to-end GreetingRunner test
+
+=== PROMPT_REPRISE.adoc
+- Déplacé de .agents/ vers racine capsule-plugin/ (conforme pattern article 0124)
+
+=== Build
+- compileKotlin: OK
+- test: 1/1 PASS
+- functionalTest: 1/1 PASS
+- publishToMavenLocal: OK
+
+== Fichiers créés
+
+- settings.gradle.kts (root)
+- build.gradle.kts (root)
+- gradle/libs.versions.toml (root)
+- capsule-plugin/settings.gradle.kts
+- capsule-plugin/build.gradle.kts
+- capsule-plugin/gradle/libs.versions.toml
+- capsule-plugin/gradlew + gradlew.bat
+- capsule-plugin/.gitignore
+- capsule-plugin/src/main/kotlin/.../CapsulePlugin.kt
+- capsule-plugin/src/test/kotlin/.../CapsulePluginTest.kt
+- capsule-plugin/src/functionalTest/kotlin/.../CapsulePluginFunctionalTest.kt
+
+== Fichier déplacé
+
+- PROMPT_REPRISE.adoc : .agents/ → capsule-plugin/
+
+== Prochaine session
+
+CAP-1 : Plugin Gradle capsule — compileOnly slider, taches capsuleScript + initiales.

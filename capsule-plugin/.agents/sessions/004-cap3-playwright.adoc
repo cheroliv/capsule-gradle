@@ -1,0 +1,60 @@
+= Session 004 — CAP-3 Playwright Java Capture
+:date: 2026-05-15
+:type: dev
+:score: 10/10
+:sessions_precedentes: 000 (bootstrap), 001 (build), 002 (CAP-1 Plugin), 003 (CAP-2 TTS Piper)
+
+== Résumé
+
+EPIC CAP-3 — Intégration Playwright Java (API JVM native, zéro npx/npm) pour le pilotage reveal.js + capture video WebM.
+
+== Correctif d'Architecture
+
+La doc locale `doc/CAPSULE_ARCHITECTURE.adoc` référençait `npx playwright` et un template MJS.
+La doc maîtresse `office/pilotage/edster/CAPSULE_ARCHITECTURE.adoc:556-562` spécifie Playwright Java (API JVM).
+→ Décision corrigée : `com.microsoft.playwright:playwright:1.52.0`, pas de `npx`, pas de script MJS.
+
+== Livrables
+
+=== PlaywrightManager.kt (nouveau — 112 lignes)
+
+- `PlaywrightCapture` : interface abstraite (capture, isAvailable, name, close)
+- `PlaywrightCaptureImpl` : wrapper Playwright Java — lance Chromium headless, setRecordVideoDir, boucle waitForFunction + Reveal.next()
+- `NoOpPlaywrightCapture` : fallback CI-safe — crée placeholder `capsule.webm` texte
+- `CapturingException` : RuntimeException pour erreurs de capture
+
+=== CapsuleModels.kt (+3 propriétés)
+
+- `playwrightTimeout` : Double, convention 120_000.0
+- `chromiumExecutablePath` : String, convention ""
+- `deckSourceDir` : String, convention "build/docs/asciidocRevealJs"
+
+=== CapsuleManager.kt (+CapsuleVideoTask — 235 lignes)
+
+- `capsulevideo` task : groupe "capsule", dépend de `capsulebuild`
+- `execute()` : résout deckDir + scriptDir, itère les scripts, appelle `injectAudio()` puis `capture.capture()`
+- `injectAudio()` : injecte attribut `data-audio` par `<section>`, ajoute `<script>` autoplay avant `</body>`
+- Bug fix critique : `resolvePlaywrightCapture()` appelée par deck (pas une seule instance partagée — `close()` dans la boucle cassait les itérations suivantes)
+
+=== build.gradle.kts
+
+- `implementation(libs.playwright)` — `com.microsoft.playwright:playwright:1.52.0`
+- `alias(libs.plugins.kover)` — Kover 0.9.1, XML+HTML reports dans `check`
+
+== Tests — 19/19 PASS
+
+- 15 unitaires : 3 registration (+capsulevideo), 5 TtsEngine, 5 extension defaults (+3 nouvelles props), 3 NoOpPlaywrightCapture, 3 CapsuleVideoTask (empty deck, empty script, e2e NoOp)
+- 4 fonctionnels GradleRunner : capsulescript, capsulebuild dependsOn, capsulebuild noop, capsulevideo
+
+== Pattern TDD
+
+- Zéro mock — interface PlaywrightCapture + NoOpPlaywrightCapture pour CI
+- ProjectBuilder + @TempDir pour tests unitaires de tâches Gradle
+- GradleRunner + @TempDir pour tests fonctionnels
+- Kover 0.9.1 dans check pour couverture continue
+
+== Reste à faire (Session 005 CAP-4)
+
+- PlaywrightCaptureImpl @Tag("integration") avec chromium réel
+- Cucumber BDD scénarios Given/When/Then
+- capsuleDistrib — recadrage TikTok FFmpeg + upload multi-plateforme

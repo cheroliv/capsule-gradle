@@ -1,0 +1,42 @@
+= Session 001 — CAP-0.3 Bootstrap Gradle
+:date: 2026-05-15
+:type: bootstrap
+:sujet: CAP-0.3 — Initialisation structure Gradle plugin + consommateur
+:score: 10/10
+
+== Contexte
+
+Session 000 terminee — gouvernance agent + cadrage architecture CAPSULE_ARCHITECTURE.adoc.
+CAP-0.1 et CAP-0.2 faits. CAP-0.3 restant : initialiser le projet Gradle.
+
+== Actions
+
+=== Root consommateur (capsule-gradle/)
+- settings.gradle.kts — mavenLocal + gradlePluginPortal, rootProject.name = "capsule-gradle"
+- build.gradle.kts — plugins { alias(libs.plugins.capsule), alias(libs.plugins.readme) }
+- gradle/libs.versions.toml — capsule 0.0.1 + readme 0.0.0
+
+=== Plugin independant (capsule-plugin/)
+- settings.gradle.kts — foojay-resolver-convention 1.0.0, rootProject.name = "capsule-plugin"
+- build.gradle.kts — java-gradle-plugin + signing + publish, jvmToolchain(24), test + functionalTest source sets
+- gradle/libs.versions.toml — kotlin 2.2.20, capsule 0.0.1
+- gradle/wrapper/ — Gradle 9.5.0
+- .gitignore — .gradle/ build/
+
+=== Source
+- CapsulePlugin.kt — greeting task stub, group = "capsule"
+- CapsulePluginTest.kt — TestKit registration test
+- CapsulePluginFunctionalTest.kt — end-to-end greeting task
+
+=== Gouvernance
+- PROMPT_REPRISE.adoc deplace de .agents/ vers racine capsule-plugin/ (conforme pattern)
+
+=== Build
+- compileKotlin OK
+- test: 1/1 PASS
+- functionalTest: 1/1 PASS
+- publishToMavenLocal OK
+
+== Prochaine session
+
+CAP-1 — CapsuleScriptTask : recuperer script.txt depuis slider-gradle, ajouter compileOnly slider-gradle

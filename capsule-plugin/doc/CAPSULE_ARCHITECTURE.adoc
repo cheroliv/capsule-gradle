@@ -21,7 +21,7 @@ post-production humaine.
 | Brique | Role
 | slider-gradle | Source unique de verite — produit le deck reveal.js + script capsule
 | Piper | TTS local, offline — genere un MP3 par slide a partir des notes speaker
-| Playwright | Pilote headless Chromium — controle reveal.js, capture video/audio
+| Playwright Java | Pilote headless Chromium — controle reveal.js, capture video/audio (API JVM native, zero npm)
 | FFmpeg | NON utilise — WebM natif Playwright, pas de conversion necessaire
 |===
 
@@ -77,7 +77,7 @@ package "slider-gradle (existant)" #LightBlue {
 package "capsule-gradle (nouveau)" #LightCoral {
   component "CapsulePlugin" as plugin
   component "TtsManager\n(Piper CLI)" as tts
-  component "PlaywrightManager\n(npx playwright)" as pwMgr
+  component "PlaywrightManager\n(Playwright Java)" as pwMgr
   component "CapsuleVideoTask\n(orchestration)" as videoTask
 }
 
@@ -98,7 +98,7 @@ plugin --> pwMgr
 plugin --> videoTask
 
 tts --> piper : CLI
-pwMgr --> playwright : npx
+pwMgr --> playwright : API JVM native
 
 videoTask --> output
 
@@ -258,38 +258,43 @@ audios[0]?.play(); // demarre la premiere slide
 | Format | WebM natif, pas de conversion
 |===
 
-Script Playwright (pseudo-code) :
+Script Playwright Java (pseudo-code) :
 
-[,javascript]
+[,kotlin]
 ----
-const { chromium } = require('playwright');
+import com.microsoft.playwright.*
+import com.microsoft.playwright.options.*
+import java.nio.file.Paths
 
-const browser = await chromium.launch({ headless: true });
-const context = await browser.newContext({
-  viewport: { width: 1408, height: 792 },
-  recordVideo: { dir: './build/capsule', size: { width: 1408, height: 792 } }
-});
-const page = await context.newPage();
+val playwright = Playwright.create()
+val browser = playwright.chromium().launch(
+    BrowserType.LaunchOptions().setHeadless(true)
+)
+val context = browser.newContext(
+    Browser.NewContextOptions()
+        .setViewportSize(1408, 792)
+        .setRecordVideoDir(Paths.get("build/capsule"))
+        .setRecordVideoSize(1408, 792)
+)
+val page: Page = context.newPage()
+page.navigate("file://$deckPath")
 
-await page.goto('file://' + deckPath);
-
-// Reveal.js gere l'audio via l'event slidechanged
-// Playwright attend la fin de chaque audio + transition
-// puis appelle Reveal.next()
-for (let i = 0; i < slideCount; i++) {
-  await page.waitForFunction(`document.getElementById('audio-${i}')?.ended === true`,
-    { timeout: 120000 }
-  );
-  // attendre la transition CSS
-  await page.waitForTimeout(500);
-  if (i < slideCount - 1) {
-    await page.evaluate('Reveal.next()');
-  }
+for (i in 0 until slideCount) {
+    page.waitForFunction(
+        "document.getElementById('audio-$i')?.ended === true",
+        null,
+        Page.WaitForFunctionOptions().setTimeout(120_000.0)
+    )
+    page.waitForTimeout(500.0)
+    if (i < slideCount - 1) {
+        page.evaluate("Reveal.next()")
+    }
 }
 
-await page.waitForTimeout(2000); // marge a la fin
-await context.close();
-await browser.close();
+page.waitForTimeout(2000.0)
+context.close()
+browser.close()
+playwright.close()
 ----
 
 === Etape 6 — Livrable final
@@ -371,9 +376,7 @@ capsule-gradle/
 │       │   ├── CapsuleManager.kt     // orchestration taches
 │       │   ├── CapsuleModels.kt      // configuration DSL
 │       │   ├── TtsManager.kt         // integration Piper/API
-│       │   └── PlaywrightManager.kt  // pilotage capture
-│       ├── main/resources/
-│       │   └── playwright-script.mjs  // template script Playwright
+│       │   └── PlaywrightManager.kt  // Playwright Java capture
 │       ├── test/kotlin/com/cheroliv/capsule/
 │       │   └── CapsulePluginTest.kt
 │       └── functionalTest/kotlin/com/cheroliv/capsule/
@@ -415,12 +418,14 @@ Slider n'a aucune dependance sur capsule.
 * Voix francaises disponibles (fr_FR)
 * API externe (ElevenLabs, OpenAI) en fallback optionnel
 
-=== Pourquoi Playwright (pas Hyperframes/impress.js) ?
+=== Pourquoi Playwright Java (pas Hyperframes/impress.js ni npx) ?
 
 * Pilotage natif de reveal.js — pas besoin de changer de moteur de slides
 * Capture video + audio integree dans une seule session
 * Licence Apache 2.0
-* API JavaScript familiere, executable en npx sans dependance npm projet
+* API JVM native (`com.microsoft.playwright:playwright`) — zero npm, zero Node.js
+* 100% Kotlin, pas de script MJS externe, pas de npx playwright install chromium
+* Browser téléchargé automatiquement par la lib au premier lancement
 
 === Pourquoi compileOnly slider-gradle ?
 

@@ -1,0 +1,64 @@
+= Session 002 — CAP-1 Plugin Gradle capsule
+:date: 2026-05-15
+:type: dev
+:epic: CAP-1
+:score: 10/10
+
+== Résumé
+
+EPIC CAP-1 implémenté : Plugin Gradle capsule avec dépendance compileOnly
+slider-gradle 0.0.6, deux tâches Gradle, DSL d'extension utilisateur.
+
+== Ce qui a été fait
+
+=== Dépendance compileOnly slider-gradle
+- `build.gradle.kts` : ajout `compileOnly(libs.slider)`
+- `gradle/libs.versions.toml` : ajout version slider 0.0.6 + coordonnées Maven
+- Montée de version Kotlin : 2.2.20 → 2.3.20 (alignée slider-gradle)
+
+=== CapsuleModels.kt — Modèles de données
+- `SlideSegment(index, title, speakerNote)` : une slide
+- `CapsuleScript(deckName, slides)` : un deck complet
+- `CapsuleExtension` : DSL utilisateur avec propriétés configurables
+  - `ttsEngine` (default: piper)
+  - `ttsVoice` (default: fr_FR-siwis-medium)
+  - `outputDir` (default: build/capsule)
+  - `sliderScriptDir` (default: build/capsule)
+  - `viewportWidth/Height` (default: 1408x792)
+
+=== CapsuleManager.kt — Gestionnaire de tâches
+- `CapsuleScriptTask` : lit *-script.txt de slider-gradle, parse, valide
+- `CapsuleBuildTask` : dépend de capsulescript, génère TTS placeholder par slide
+- `CapsuleManager` : point d'entrée, registre les tâches via Project extension
+
+=== CapsulePlugin.kt — Point d'entrée Gradle
+- Crée l'extension `capsule`
+- Délègue l'enregistrement des tâches à CapsuleManager
+
+=== Tests
+- CapsulePluginTest : 3 tests unitaires
+  - plugin registers capsulescript task ✅
+  - plugin registers capsulebuild task ✅
+  - plugin registers capsule extension ✅
+- CapsulePluginFunctionalTest : 2 tests fonctionnels GradleTestKit
+  - can run capsulescript task ✅
+  - capsulebuild task depends on capsulescript ✅
+- 5/5 tests PASS
+
+=== Conformité Gradle 9.5.0
+- `@Internal` sur les propriétés capsuleExtension (pas input/output)
+- `@OutputDirectory` sur les répertoires de sortie
+- `@DisableCachingByDefault(because = "...")` sur les deux tâches
+- `./gradlew check` ✅ (compileKotlin + test + functionalTest + validatePlugins)
+
+== Fichiers modifiés/créés
+- `build.gradle.kts` — ajout compileOnly + kotlin 2.3.20
+- `gradle/libs.versions.toml` — slider 0.0.6, kotlin 2.3.20
+- `src/main/kotlin/com/cheroliv/capsule/CapsuleModels.kt` — NOUVEAU
+- `src/main/kotlin/com/cheroliv/capsule/CapsuleManager.kt` — NOUVEAU
+- `src/main/kotlin/com/cheroliv/capsule/CapsulePlugin.kt` — réécrit
+- `src/test/kotlin/com/cheroliv/capsule/CapsulePluginTest.kt` — 3 tests
+- `src/functionalTest/kotlin/com/cheroliv/capsule/CapsulePluginFunctionalTest.kt` — 2 tests
+
+== Prochaine session
+CAP-2 — Intégration TTS Piper réelle (remplacement placeholder par CLI piper)
