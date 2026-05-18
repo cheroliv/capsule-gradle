@@ -2,7 +2,7 @@
 
 == Hook d'Ouverture — Avant de commencer une session
 
-. [ ] Lire `PROMPT_REPRISE.adoc` — contexte de la session precedente
+. [ ] PROMPT_REPRISE injecte par opencode — ne pas lire localement
 . [ ] Lire `AGENT.adoc` — regles absolues (7 regles)
 . [ ] Lire `.agents/INDEX.adoc` — roadmap, etat des EPICs, portefeuille
 . [ ] Verifier l'etat git (`git status` depuis `capsule-gradle/`)
@@ -20,7 +20,7 @@
 == Hook de Fermeture — Procedure 6 etapes
 
 . [ ] 1. Rapport de session → `.agents/sessions/NNN-sujet.adoc`
-. [ ] 2. Mise a jour `PROMPT_REPRISE.adoc`
+. [ ] 2. Mise a jour `configuration/.agents/PROMPT_REPRISE.adoc`
 . [ ] 3. Mise a jour `INDEX.adoc`
 . [ ] 4. Mise a jour `SESSIONS_HISTORY.adoc`
 . [ ] 5. Archivage `COMPLETED_TASKS_ARCHIVE.adoc`
