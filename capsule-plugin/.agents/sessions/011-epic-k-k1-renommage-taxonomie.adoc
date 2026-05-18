@@ -1,0 +1,28 @@
+= Session 011 — EPIC K-1 Renommage taxonomie (generateCapsuleScript, generateCapsule, generateCapsuleVideo, deployCapsule, collectCapsuleContext, transformCapsuleContext, collectCapsuleRetrieve)
+:type: migration
+:date: 2026-05-19
+:score: 10/10
+
+== Résumé
+
+Renommage de 7 tâches conformément à la taxonomie workspace (GENERER/COLLECTER/TRANSFORMER/DÉPLOYER).
+
+- `capsulescript` → `generateCapsuleScript`
+- `capsulebuild` → `generateCapsule`
+- `capsulevideo` → `generateCapsuleVideo`
+- `capsuledistrib` → `deployCapsule`
+- `capsulecompositecontext` → `collectCapsuleContext`
+- `capsuleparsecontext` → `transformCapsuleContext`
+- `capsuleretrieve` → `collectCapsuleRetrieve`
+
+== Fichiers modifiés
+
+12 fichiers dans `capsule-plugin/` :
+- Renommage des classes de tâches
+- Renommage des registrations dans `CapsulePlugin.kt`
+- Mise à jour des références internes et tests
+- Mise à jour de la documentation
+
+== Build
+
+Compilation OK.

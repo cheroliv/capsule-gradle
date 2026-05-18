@@ -40,13 +40,13 @@ EPIC CAP-2 implémenté : interface TtsEngine abstraite + PiperTtsEngine réel
 
 === Tests
 - CapsulePluginTest : 8 tests unitaires
-  - 3 registration (capsulescript, capsulebuild, extension) ✅
+  - 3 registration (generateCapsuleScript, generateCapsule, extension) ✅
   - 5 TtsEngine (noop availability, noop synthesize, noop mkdirs, piper unavailable,
     piper throws exception, extension defaults) ✅
 - CapsulePluginFunctionalTest : 3 tests fonctionnels GradleTestKit
-  - capsulescript (no scripts) ✅
-  - capsulebuild dependsOn capsulescript ✅
-  - capsulebuild noop engine fallback ✅
+  - generateCapsuleScript (no scripts) ✅
+  - generateCapsule dependsOn generateCapsuleScript ✅
+  - generateCapsule noop engine fallback ✅
 - 11/11 tests PASS
 
 == Fichiers modifiés/créés

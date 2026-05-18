@@ -24,9 +24,9 @@ speaker deja presentes dans l'AsciiDoc source.
 
 == Taches Principales
 
-  ./gradlew capsulescript           → extraire les scripts TTS par deck
-  ./gradlew capsulebuild            → generer les MP3 TTS par slide
-  ./gradlew capsulevideo            → capturer la video Playwright (deck + audio)
+  ./gradlew generateCapsuleScript   → extraire les scripts TTS par deck
+  ./gradlew generateCapsule         → generer les MP3 TTS par slide
+  ./gradlew generateCapsuleVideo    → capturer la video Playwright (deck + audio)
   ./gradlew check                   → tous les tests (unitaire + fonctionnel + Cucumber)
 
 == Tests

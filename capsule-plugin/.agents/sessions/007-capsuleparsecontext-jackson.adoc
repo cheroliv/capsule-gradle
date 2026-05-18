@@ -16,7 +16,7 @@ Tâche `capsuleparsecontext` (pendant de `capsuleCompositeContext`) :
 - Sortie fichier `capsule-parse-results.json` (pretty print Jackson)
 - Gère fichier absent (retourne `[]`)
 
-Tâche `capsuleretrieve` (contrat engine N3) :
+Tâche `collectCapsuleRetrieve` (contrat engine N3) :
 - Accepte `-PoutputFile=<path>` (même pattern que codexRetrieve/trainingRetrieve)
 - Utilise `CapsuleParseContextTask` en dessous
 
@@ -33,13 +33,13 @@ Fichier modifié : `engine/build.gradle.kts`
 - `buildscript { classpath jackson-module-kotlin + jackson-databind 2.18.3 }`
 - `groovy.json.JsonSlurper` → `jacksonObjectMapper().readValue()`
 - `groovy.json.JsonOutput.toJson()` → `jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString()`
-- `capsuleEntries` dans `assembleCompositeContext` (ProcessBuilder → `capsuleretrieve`)
+- `capsuleEntries` dans `assembleCompositeContext` (ProcessBuilder → `collectCapsuleRetrieve`)
 
 == Tests (TDD complet)
 
 - 3 unitaires : CapsuleParseContextTaskTest (parse, empty list, missing file)
-- 2 fonctionnels : capsuleparsecontext, capsuleretrieve -PoutputFile
-- 1 Cucumber : Composite context JSON is parsed for engine N3 contract (capsulevideo → capsuledistrib → capsulecompositecontext → capsuleparsecontext → asserts deckName/originalVideo/valid JSON array)
+- 2 fonctionnels : transformCapsuleContext, collectCapsuleRetrieve -PoutputFile
+- 1 Cucumber : Composite context JSON is parsed for engine N3 contract (generateCapsuleVideo → deployCapsule → collectCapsuleContext → transformCapsuleContext → asserts deckName/originalVideo/valid JSON array)
 
 == Règles respectées
 

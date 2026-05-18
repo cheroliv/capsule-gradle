@@ -4,12 +4,12 @@
 |===
 | Date | Session | Tâche | Résultat
 | 2026-05-17 | 009-dev | CAP-9 — Pipeline E2E + TTS espeak + Audio mix FFmpeg + Timing dynamique | ✅ 4 bugs pipeline, auto-apply slider conditionnel, TTS espeak, mixAudioWithVideo concat FFmpeg, computeSlideDurations ffprobe, PlaywrightCapture signature List<Double>, timing dynamique par slide, 31 unit + 10 functional PASS, WebM 322s 23.7MB audio Vorbis continu
-| 2026-05-16 | 006-dev | CAP-7 — capsuleDistrib FFmpeg 9:16 | ✅ CapsuleDistribTask, crop FFmpeg 1080x1920, fallback copy si ffmpeg absent, multi-deck, 3 tests unitaires
-| 2026-05-16 | 006-dev | CAP-6 — capsuleCompositeContext Integrations N3 | ✅ CapsuleCompositeContextTask, export JSON (capsule-capsule-context.json) compatible engine, buildJsonString manuel, 3 tests unitaires, 2 tests fonctionnels, CapsuleExtension +4 props (ffmpeg/distribWidth/distribHeight/compositeContext)
+| 2026-05-16 | 006-dev | CAP-7 — deployCapsule FFmpeg 9:16 | ✅ CapsuleDistribTask, crop FFmpeg 1080x1920, fallback copy si ffmpeg absent, multi-deck, 3 tests unitaires
+| 2026-05-16 | 006-dev | CAP-6 — collectCapsuleContext Integrations N3 | ✅ CapsuleCompositeContextTask, export JSON (capsule-capsule-context.json) compatible engine, buildJsonString manuel, 3 tests unitaires, 2 tests fonctionnels, CapsuleExtension +4 props (ffmpeg/distribWidth/distribHeight/compositeContext)
 | 2026-05-16 | 005-dev | CAP-4 — CapsuleVideo orchestration + CAP-5 Cucumber BDD | ✅ Sequential fallback audio, multi-deck, noop bridge, @Tag integration chromium + 5 scenarios Gherkin, cucumberTest task, 28/28 PASS
-| 2026-05-15 | 004-dev | CAP-3 — Playwright Java capture | ✅ PlaywrightCapture interface/Impl/NoOp, capsulevideo task (dépend de capsulebuild), injectAudio HTML + script autoplay, CapsuleExtension +3 props (playwrightTimeout/chromiumExec/deckSource), Kover 0.9.1 XML+HTML dans check, 19/19 PASS
+| 2026-05-15 | 004-dev | CAP-3 — Playwright Java capture | ✅ PlaywrightCapture interface/Impl/NoOp, generateCapsuleVideo task (dépend de generateCapsule), injectAudio HTML + script autoplay, CapsuleExtension +3 props (playwrightTimeout/chromiumExec/deckSource), Kover 0.9.1 XML+HTML dans check, 19/19 PASS
 | 2026-05-15 | 003-dev | CAP-2 — Intégration TTS Piper | ✅ TtsEngine interface, PiperTtsEngine CLI (ProcessBuilder stdin), NoOpTtsEngine fallback, CapsuleBuildTask refactor, 11/11 PASS, check OK
-| 2026-05-15 | 002-dev | CAP-1 — Plugin Gradle capsule | ✅ compileOnly slider 0.0.6, 2 taches (capsulescript+capsulebuild), CapsuleExtension DSL, Kotlin 2.3.20, 5/5 PASS, check OK
+| 2026-05-15 | 002-dev | CAP-1 — Plugin Gradle capsule | ✅ compileOnly slider 0.0.6, 2 taches (generateCapsuleScript+generateCapsule), CapsuleExtension DSL, Kotlin 2.3.20, 5/5 PASS, check OK
 | 2026-05-15 | 001-build | CAP-0.3 — Structure Gradle (root + plugin) | ✅ settings/buil/lib.versions root + plugin, CapsulePlugin stub, wrapper 9.5.0, compile OK, 2/2 PASS, publishToMavenLocal
 | 2026-05-14 | bootstrap | CAP-0.2 — Cadrage architecture pipeline capsule | ✅ 310 lignes, 4 diagrammes PlantUML, decisions techniques
 | 2026-05-14 | bootstrap | CAP-0.1 — Gouvernance agent capsule | ✅ 7 fichiers gouvernance (.agents/ + AGENT.adoc)

@@ -12,50 +12,50 @@ import kotlin.test.assertTrue
 class CapsulePluginTest {
 
     @Test
-    fun `plugin registers capsulescript task`() {
+    fun `plugin registers generateCapsuleScript task`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("com.cheroliv.capsule")
-        assertNotNull(project.tasks.findByName("capsulescript"))
+        project.plugins.apply("cccp.education.capsule")
+        assertNotNull(project.tasks.findByName("generateCapsuleScript"))
     }
 
     @Test
-    fun `plugin registers capsulebuild task`() {
+    fun `plugin registers generateCapsule task`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("com.cheroliv.capsule")
-        assertNotNull(project.tasks.findByName("capsulebuild"))
+        project.plugins.apply("cccp.education.capsule")
+        assertNotNull(project.tasks.findByName("generateCapsule"))
     }
 
     @Test
-    fun `plugin registers capsule video task`() {
+    fun `plugin registers generateCapsuleVideo task`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("com.cheroliv.capsule")
-        val task = project.tasks.findByName("capsulevideo")
+        project.plugins.apply("cccp.education.capsule")
+        val task = project.tasks.findByName("generateCapsuleVideo")
         assertNotNull(task)
-        assertEquals("capsule", task.group)
+        assertEquals("generate", task.group)
     }
 
     @Test
-    fun `plugin registers capsuledistrib task`() {
+    fun `plugin registers deployCapsule task`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("com.cheroliv.capsule")
-        val task = project.tasks.findByName("capsuledistrib")
+        project.plugins.apply("cccp.education.capsule")
+        val task = project.tasks.findByName("deployCapsule")
         assertNotNull(task)
-        assertEquals("capsule", task.group)
+        assertEquals("deploy", task.group)
     }
 
     @Test
-    fun `plugin registers capsulecompositecontext task`() {
+    fun `plugin registers collectCapsuleContext task`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("com.cheroliv.capsule")
-        val task = project.tasks.findByName("capsulecompositecontext")
+        project.plugins.apply("cccp.education.capsule")
+        val task = project.tasks.findByName("collectCapsuleContext")
         assertNotNull(task)
-        assertEquals("capsule", task.group)
+        assertEquals("collect", task.group)
     }
 
     @Test
     fun `plugin registers capsule extension`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("com.cheroliv.capsule")
+        project.plugins.apply("cccp.education.capsule")
         val ext = project.extensions.findByType(CapsuleExtension::class.java)
         assertNotNull(ext)
     }
@@ -118,7 +118,7 @@ class TtsEngineTest {
     @Test
     fun `capsule extension has expected defaults`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("com.cheroliv.capsule")
+        project.plugins.apply("cccp.education.capsule")
         val ext = project.extensions.getByType(CapsuleExtension::class.java)
 
         assertEquals("piper", ext.ttsEngine.get())
@@ -197,7 +197,7 @@ class CapsuleVideoTaskTest {
         ext.ttsEngine.set("noop")
         ext.outputDir.set("capsule")
 
-        val t = project.tasks.register("capsulevideo", CapsuleVideoTask::class.java).get()
+        val t = project.tasks.register("generateCapsuleVideo", CapsuleVideoTask::class.java).get()
         t.capsuleExtension = ext
         if (capture != null) t.playwrightCapture = capture
         if (engine != null) t.ttsEngine = engine
@@ -420,7 +420,7 @@ class CapsuleDistribTaskTest {
         ext.outputDir.set("capsule")
         ext.ffmpegExecutablePath.set(if (ffmpegAvailable) "ffmpeg" else "__no_ffmpeg__")
 
-        val t = project.tasks.register("capsuledistrib", CapsuleDistribTask::class.java).get()
+        val t = project.tasks.register("deployCapsule", CapsuleDistribTask::class.java).get()
         t.capsuleExtension = ext
         return t
     }
@@ -485,7 +485,7 @@ class CapsuleCompositeContextTaskTest {
         ext.ttsEngine.set("piper")
         ext.ttsVoice.set("fr_FR-siwis-medium")
 
-        val t = project.tasks.register("capsulecompositecontext", CapsuleCompositeContextTask::class.java).get()
+        val t = project.tasks.register("collectCapsuleContext", CapsuleCompositeContextTask::class.java).get()
         t.capsuleExtension = ext
         return t
     }
@@ -580,7 +580,7 @@ class CapsuleParseContextTaskTest {
         outputFile: File
     ): CapsuleParseContextTask {
         val project = ProjectBuilder.builder().withProjectDir(tempDir).build()
-        val t = project.tasks.register("capsuleparsecontext", CapsuleParseContextTask::class.java).get()
+        val t = project.tasks.register("transformCapsuleContext", CapsuleParseContextTask::class.java).get()
         t.contextFile.set(contextJsonFile)
         t.outputFile.set(outputFile)
         return t

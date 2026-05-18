@@ -8,11 +8,12 @@ playwright = "1.52.0"
 kover = "0.9.1"
 cucumber = "7.34.3"
 jackson = "2.18.3"
+codebase = "0.0.1"
 
 [libraries]
 kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5", version.ref = "kotlin" }
 kotlin-stdlib-jdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8" }
-slider = { group = "com.cheroliv", name = "slider", version.ref = "slider" }
+slider = { group = "education.cccp", name = "slider", version.ref = "slider" }
 playwright = { group = "com.microsoft.playwright", name = "playwright", version.ref = "playwright" }
 cucumber-java = { module = "io.cucumber:cucumber-java", version.ref = "cucumber" }
 cucumber-junit-platform-engine = { module = "io.cucumber:cucumber-junit-platform-engine", version.ref = "cucumber" }
@@ -23,8 +24,9 @@ jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-capsule = { id = "com.cheroliv.capsule", version.ref = "capsule" }
+capsule = { id = "education.cccp.capsule", version.ref = "capsule" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+codebase = { id = "education.cccp.codebase", version.ref = "codebase" }
 
 [bundles]
 cucumber = [

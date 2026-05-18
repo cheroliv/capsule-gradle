@@ -10,7 +10,7 @@ Deux nouvelles tâches Gradle ajoutées au pipeline capsule.
 
 == CAP-6 — capsuleCompositeContext (Integrations N3)
 
-Tâche `capsulecompositecontext` qui exporte le contexte des capsules
+Tâche `collectCapsuleContext` qui exporte le contexte des capsules
 dans un fichier JSON compatible avec le moteur engine N3.
 
 Fichier modifié : `src/main/kotlin/com/cheroliv/capsule/CapsuleManager.kt`
@@ -26,7 +26,7 @@ Fichier modifié : `src/main/kotlin/com/cheroliv/capsule/CapsuleManager.kt`
 
 == CAP-7 — capsuleDistrib (FFmpeg recadrage 9:16)
 
-Tâche `capsuledistrib` qui recadre capsule.webm en format vertical 9:16
+Tâche `deployCapsule` qui recadre capsule.webm en format vertical 9:16
 pour TikTok/Shorts/Reels, avec fallback copy si FFmpeg absent.
 
 Fichier modifié : `src/main/kotlin/com/cheroliv/capsule/CapsuleManager.kt`
@@ -53,8 +53,8 @@ Fichier modifié : `src/main/kotlin/com/cheroliv/capsule/CapsuleModels.kt`
 == Tests fonctionnels
 
 2 tests fonctionnels ajoutés (CapsulePluginFunctionalTest.kt) :
-- `can run capsuledistrib task`
-- `can run capsulecompositecontext task`
+- `can run deployCapsule task`
+- `can run collectCapsuleContext task`
 
 == Règles respectées
 
@@ -67,7 +67,10 @@ Fichier modifié : `src/main/kotlin/com/cheroliv/capsule/CapsuleModels.kt`
 == Pipeline final (rappel)
 
   AsciiDoc → slider-gradle → deck.html + *-script.txt
-  → capsulescript → capsulebuild (TTS)
-  → capsulevideo (Playwright capture → .webm)
-  → capsuledistrib (FFmpeg crop 9:16)
-  → capsulecompositecontext (JSON → engine N3)
+  → generateCapsuleScript → generateCapsule (TTS)
+
+  → generateCapsuleVideo (Playwright capture → .webm)
+
+  → deployCapsule (FFmpeg crop 9:16)
+
+  → collectCapsuleContext (JSON → engine N3)

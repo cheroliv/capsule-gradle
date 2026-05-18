@@ -141,7 +141,7 @@ user -> slider : ./gradlew asciidocCapsule
 slider -> deck : genere script.txt
 
 == Phase 2: TTS ==
-user -> capsule : ./gradlew capsulevideo
+user -> capsule : ./gradlew generateCapsuleVideo
 capsule -> deck : lit script.txt
 loop chaque slide
   capsule -> piper : tts("texte speaker note")

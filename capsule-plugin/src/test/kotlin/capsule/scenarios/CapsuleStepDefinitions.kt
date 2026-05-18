@@ -26,7 +26,7 @@ class CapsuleStepDefinitions {
         projectDir.resolve("settings.gradle").writeText("")
         projectDir.resolve("build.gradle").writeText("""
             plugins {
-                id('com.cheroliv.capsule')
+                id('cccp.education.capsule')
             }
             capsule {
                 ttsEngine = "noop"
@@ -217,7 +217,7 @@ $slides
         projectDir.resolve("settings.gradle").writeText("")
         projectDir.resolve("build.gradle").writeText("""
             plugins {
-                id('com.cheroliv.capsule')
+                id('cccp.education.capsule')
             }
             capsule {
                 ttsEngine = "espeak"
@@ -235,7 +235,7 @@ $slides
         projectDir.resolve("settings.gradle").writeText("")
         projectDir.resolve("build.gradle").writeText("""
             plugins {
-                id('com.cheroliv.capsule')
+                id('cccp.education.capsule')
             }
             capsule {
                 ttsEngine = "noop"

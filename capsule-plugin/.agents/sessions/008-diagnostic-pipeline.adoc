@@ -57,9 +57,11 @@ soit ajouter un flag `forceAudioInjection` pour les tests.
 
 ```
 asciidocCapsule    → ✅ architecture-plugin-deck-script.txt (15 slides)
-capsulescript      → ✅ 2 scripts (architecture-plugin-deck + example-deck)
-capsulebuild       → ✅ 16 fichiers MP3 (noop placeholders)
-capsulevideo       → ✅ 2 fichiers WebM générés (mais statiques)
+generateCapsuleScript → ✅ 2 scripts (architecture-plugin-deck + example-deck)
+
+  generateCapsule      → ✅ 16 fichiers MP3 (noop placeholders)
+
+  generateCapsuleVideo → ✅ 2 fichiers WebM générés (mais statiques)
 ```
 
 == État des Tests

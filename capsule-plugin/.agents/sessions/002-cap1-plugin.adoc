@@ -28,7 +28,7 @@ slider-gradle 0.0.6, deux tâches Gradle, DSL d'extension utilisateur.
 
 === CapsuleManager.kt — Gestionnaire de tâches
 - `CapsuleScriptTask` : lit *-script.txt de slider-gradle, parse, valide
-- `CapsuleBuildTask` : dépend de capsulescript, génère TTS placeholder par slide
+- `CapsuleBuildTask` : dépend de generateCapsuleScript, génère TTS placeholder par slide
 - `CapsuleManager` : point d'entrée, registre les tâches via Project extension
 
 === CapsulePlugin.kt — Point d'entrée Gradle
@@ -37,12 +37,12 @@ slider-gradle 0.0.6, deux tâches Gradle, DSL d'extension utilisateur.
 
 === Tests
 - CapsulePluginTest : 3 tests unitaires
-  - plugin registers capsulescript task ✅
-  - plugin registers capsulebuild task ✅
+  - plugin registers generateCapsuleScript task ✅
+  - plugin registers generateCapsule task ✅
   - plugin registers capsule extension ✅
 - CapsulePluginFunctionalTest : 2 tests fonctionnels GradleTestKit
-  - can run capsulescript task ✅
-  - capsulebuild task depends on capsulescript ✅
+  - can run generateCapsuleScript task ✅
+  - generateCapsule task depends on generateCapsuleScript ✅
 - 5/5 tests PASS
 
 === Conformité Gradle 9.5.0

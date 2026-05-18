@@ -5,7 +5,7 @@
 
 == Contexte
 Migration complete du namespace CCCP — tous les fichiers du package
-`com.cheroliv.capsule` deplaces vers le package `capsule`.
+`cccp.education.capsule` deplaces vers le package `capsule`.
 
 == Actions
 * Rename massif 8 fichiers source + test : `com/cheroliv/capsule/` → `capsule/`

@@ -18,61 +18,61 @@ class CapsuleManager(private val project: Project) {
     private val capsuleExt = project.extensions.getByType(CapsuleExtension::class.java)
 
     fun registerTasks() {
-        project.registerCapsuleScriptTask()
-        project.registerCapsuleBuildTask()
-        project.registerCapsuleVideoTask()
-        project.registerCapsuleDistribTask()
-        project.registerCapsuleCompositeContextTask()
-        project.registerCapsuleParseContextTask()
+        project.registerGenerateCapsuleScriptTask()
+        project.registerGenerateCapsuleTask()
+        project.registerGenerateCapsuleVideoTask()
+        project.registerDeployCapsuleTask()
+        project.registerCollectCapsuleContextTask()
+        project.registerTransformCapsuleContextTask()
     }
 
-    private fun Project.registerCapsuleScriptTask() {
-        tasks.register("capsulescript", CapsuleScriptTask::class.java) { task ->
-            task.group = "capsule"
+    private fun Project.registerGenerateCapsuleScriptTask() {
+        tasks.register("generateCapsuleScript", CapsuleScriptTask::class.java) { task ->
+            task.group = "generate"
             task.description = "Reads *-script.txt produced by slider-gradle and validates the capsule script"
             task.capsuleExtension = this@CapsuleManager.capsuleExt
         }
     }
 
-    private fun Project.registerCapsuleBuildTask() {
-        tasks.register("capsulebuild", CapsuleBuildTask::class.java) { task ->
-            task.group = "capsule"
+    private fun Project.registerGenerateCapsuleTask() {
+        tasks.register("generateCapsule", CapsuleBuildTask::class.java) { task ->
+            task.group = "generate"
             task.description = "Generates TTS audio files from capsule scripts (Piper placeholder)"
-            task.dependsOn("capsulescript")
+            task.dependsOn("generateCapsuleScript")
             task.capsuleExtension = this@CapsuleManager.capsuleExt
         }
     }
 
-    private fun Project.registerCapsuleVideoTask() {
-        tasks.register("capsulevideo", CapsuleVideoTask::class.java) { task ->
-            task.group = "capsule"
+    private fun Project.registerGenerateCapsuleVideoTask() {
+        tasks.register("generateCapsuleVideo", CapsuleVideoTask::class.java) { task ->
+            task.group = "generate"
             task.description = "Injects TTS audio into deck HTML then captures video via Playwright Java"
-            task.dependsOn("capsulebuild")
+            task.dependsOn("generateCapsule")
             task.capsuleExtension = this@CapsuleManager.capsuleExt
         }
     }
 
-    private fun Project.registerCapsuleDistribTask() {
-        tasks.register("capsuledistrib", CapsuleDistribTask::class.java) { task ->
-            task.group = "capsule"
+    private fun Project.registerDeployCapsuleTask() {
+        tasks.register("deployCapsule", CapsuleDistribTask::class.java) { task ->
+            task.group = "deploy"
             task.description = "Recadre les capsules en format vertical 9:16 (TikTok/Shorts) via FFmpeg"
-            task.dependsOn("capsulevideo")
+            task.dependsOn("generateCapsuleVideo")
             task.capsuleExtension = this@CapsuleManager.capsuleExt
         }
     }
 
-    private fun Project.registerCapsuleCompositeContextTask() {
-        tasks.register("capsulecompositecontext", CapsuleCompositeContextTask::class.java) { task ->
-            task.group = "capsule"
+    private fun Project.registerCollectCapsuleContextTask() {
+        tasks.register("collectCapsuleContext", CapsuleCompositeContextTask::class.java) { task ->
+            task.group = "collect"
             task.description = "Exporte le contexte des capsules (chemins videos + metadonnees) en JSON compatible engine N3"
-            task.dependsOn("capsuledistrib")
+            task.dependsOn("deployCapsule")
             task.capsuleExtension = this@CapsuleManager.capsuleExt
         }
     }
 
-    private fun Project.registerCapsuleParseContextTask() {
-        tasks.register("capsuleparsecontext", CapsuleParseContextTask::class.java) { task ->
-            task.group = "capsule"
+    private fun Project.registerTransformCapsuleContextTask() {
+        tasks.register("transformCapsuleContext", CapsuleParseContextTask::class.java) { task ->
+            task.group = "transform"
             task.description = "Parse le fichier capsule-context.json et retourne une liste de decks"
             task.contextFile.convention(
                 project.layout.buildDirectory.file("capsule/capsule-context.json")
@@ -82,8 +82,8 @@ class CapsuleManager(private val project: Project) {
             )
         }
 
-        tasks.register("capsuleretrieve", CapsuleParseContextTask::class.java) { task ->
-            task.group = "capsule"
+        tasks.register("collectCapsuleRetrieve", CapsuleParseContextTask::class.java) { task ->
+            task.group = "collect"
             task.description = "Retrieve capsule decks from capsule-context.json (N3 engine contract)"
             val outputFile = project.findProperty("outputFile") as? String
             if (outputFile != null) {
@@ -768,7 +768,7 @@ open class CapsuleDistribTask : DefaultTask() {
             ?: emptyList()
 
         if (videos.isEmpty()) {
-            logger.warn("No capsule videos found in {}. Run 'capsulevideo' first.", capDir.absolutePath)
+            logger.warn("No capsule videos found in {}. Run 'generateCapsuleVideo' first.", capDir.absolutePath)
             return
         }
 

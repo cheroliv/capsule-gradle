@@ -16,7 +16,7 @@ Session étendue : CAP-9 (4 bugs) + améliorations pipeline + TTS espeak + Audio
 - BUG 4 : `hasRealAudio` → `hasAudio` (injection même avec noop)
 
 === CapsulePlugin auto-applique slider (conditionnel)
-- `CapsulePlugin.kt` : try-catch autour de `project.plugins.apply("com.cheroliv.slider")`
+- `CapsulePlugin.kt` : try-catch autour de `project.plugins.apply("cccp.education.slider")`
 - `compileOnly(libs.slider)` — pas de conflit Groovy avec Gradle 4.0.29
 - Consommateur déclare slider explicitement (libs.versions.toml)
 

@@ -8,7 +8,7 @@
 | Classe | Type | Tests | Couverture
 | CapsulePlugin.kt | main | 6 unitaires | Enregistrement extension + 5 taches
 | CapsuleModels.kt | main | 1 unitaire | Valeurs par défaut de CapsuleExtension (11 propriétés)
-| CapsuleManager.kt | main | 4 fonctionnels | capsulescript (lecture scripts), capsulebuild dependsOn, capsulebuild noop, capsulevideo
+| CapsuleManager.kt | main | 4 fonctionnels | generateCapsuleScript (lecture scripts), generateCapsule dependsOn, generateCapsule noop, generateCapsuleVideo
 | CapsuleManager.kt (bugs) | main | — | 4 bugs corrigés : paths, example-deck, format string, audio injection
 | CapsuleManager.kt (mixAudio) | main | 5 (indirect) | mixAudioWithVideo + computeSlideDurations + ffprobeDuration
 | TtsManager.kt | main | 5 unitaires | NoOpTtsEngine, PiperTtsEngine, EspeakTtsEngine (3), TtsException

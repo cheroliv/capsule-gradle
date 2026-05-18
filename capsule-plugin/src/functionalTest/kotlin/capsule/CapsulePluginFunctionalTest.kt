@@ -18,20 +18,20 @@ class CapsulePluginFunctionalTest {
         settingsFile.writeText("")
         buildFile.writeText("""
             plugins {
-                id('com.cheroliv.capsule')
+                id('cccp.education.capsule')
             }
             $extraConfig
         """.trimIndent())
     }
 
     @Test
-    fun `can run capsulescript task`() {
+    fun `can run generateCapsuleScript task`() {
         setupBuild()
 
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("capsulescript")
+        runner.withArguments("generateCapsuleScript")
         runner.withProjectDir(projectDir)
         val result = runner.build()
 
@@ -39,21 +39,21 @@ class CapsulePluginFunctionalTest {
     }
 
     @Test
-    fun `capsulebuild task depends on capsulescript`() {
+    fun `generateCapsule task depends on generateCapsuleScript`() {
         setupBuild()
 
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("capsulebuild")
+        runner.withArguments("generateCapsule")
         runner.withProjectDir(projectDir)
         val result = runner.build()
 
-        assertTrue(result.output.contains("capsulescript") || result.output.contains("No capsule scripts"))
+        assertTrue(result.output.contains("generateCapsuleScript") || result.output.contains("No capsule scripts"))
     }
 
     @Test
-    fun `capsulebuild with noop engine falls back gracefully`() {
+    fun `generateCapsule with noop engine falls back gracefully`() {
         setupBuild("""
             capsule {
                 ttsEngine = "noop"
@@ -63,7 +63,7 @@ class CapsulePluginFunctionalTest {
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("capsulebuild")
+        runner.withArguments("generateCapsule")
         runner.withProjectDir(projectDir)
         val result = runner.build()
 
@@ -71,7 +71,7 @@ class CapsulePluginFunctionalTest {
     }
 
     @Test
-    fun `can run capsulevideo task`() {
+    fun `can run generateCapsuleVideo task`() {
         setupBuild("""
             capsule {
                 ttsEngine = "noop"
@@ -81,7 +81,7 @@ class CapsulePluginFunctionalTest {
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("capsulevideo")
+        runner.withArguments("generateCapsuleVideo")
         runner.withProjectDir(projectDir)
         val result = runner.build()
 
@@ -89,7 +89,7 @@ class CapsulePluginFunctionalTest {
     }
 
     @Test
-    fun `can run capsuledistrib task`() {
+    fun `can run deployCapsule task`() {
         setupBuild("""
             capsule {
                 ttsEngine = "noop"
@@ -99,7 +99,7 @@ class CapsulePluginFunctionalTest {
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("capsuledistrib")
+        runner.withArguments("deployCapsule")
         runner.withProjectDir(projectDir)
         val result = runner.build()
 
@@ -107,7 +107,7 @@ class CapsulePluginFunctionalTest {
     }
 
     @Test
-    fun `can run capsulecompositecontext task`() {
+    fun `can run collectCapsuleContext task`() {
         setupBuild("""
             capsule {
                 ttsEngine = "noop"
@@ -117,7 +117,7 @@ class CapsulePluginFunctionalTest {
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("capsulecompositecontext")
+        runner.withArguments("collectCapsuleContext")
         runner.withProjectDir(projectDir)
         val result = runner.build()
 
@@ -125,13 +125,13 @@ class CapsulePluginFunctionalTest {
     }
 
     @Test
-    fun `capsuleparsecontext produces valid json output`() {
+    fun `transformCapsuleContext produces valid json output`() {
         setupBuild()
 
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("capsuleparsecontext")
+        runner.withArguments("transformCapsuleContext")
         runner.withProjectDir(projectDir)
         val result = runner.build()
 
@@ -139,13 +139,13 @@ class CapsulePluginFunctionalTest {
     }
 
     @Test
-    fun `capsuleretrieve with outputFile parameter`() {
+    fun `collectCapsuleRetrieve with outputFile parameter`() {
         setupBuild()
 
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("capsuleretrieve", "-PoutputFile=build/capsule/retrieve-results.json")
+        runner.withArguments("collectCapsuleRetrieve", "-PoutputFile=build/capsule/retrieve-results.json")
         runner.withProjectDir(projectDir)
         val result = runner.build()
 
@@ -162,7 +162,7 @@ class CapsuleAudioConstraintFunctionalTest {
         projectDir.resolve("settings.gradle").writeText("")
         projectDir.resolve("build.gradle").writeText("""
             plugins {
-                id('com.cheroliv.capsule')
+                id('cccp.education.capsule')
             }
             capsule {
                 ttsEngine = "espeak"
@@ -196,7 +196,7 @@ Ceci est un test de synthese vocale.
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("capsulebuild")
+        runner.withArguments("generateCapsule")
         runner.withProjectDir(projectDir)
         val result = runner.build()
 
@@ -219,11 +219,11 @@ class CapsuleVideoOutputConstraintFunctionalTest {
     private val webmSignature = byteArrayOf(0x1a.toByte(), 0x45.toByte(), 0xdf.toByte(), 0xa3.toByte())
 
     @Test
-    fun `capsulevideo task must output to capsules directory not build`() {
+    fun `generateCapsuleVideo task must output to capsules directory not build`() {
         projectDir.resolve("settings.gradle").writeText("")
         projectDir.resolve("build.gradle").writeText("""
             plugins {
-                id('com.cheroliv.capsule')
+                id('cccp.education.capsule')
             }
             capsule {
                 ttsEngine = "noop"
@@ -252,7 +252,7 @@ Note content.
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("capsulevideo")
+        runner.withArguments("generateCapsuleVideo")
         runner.withProjectDir(projectDir)
         val result = runner.build()
 

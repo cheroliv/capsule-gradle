@@ -1,0 +1,25 @@
+= PROMPT_REPRISE — Session 011 terminée (K-1)
+
+== Mission accomplie
+
+Renommage taxonomie de 7 tâches :
+- `capsulescript`→`generateCapsuleScript`
+- `capsulebuild`→`generateCapsule`
+- `capsulevideo`→`generateCapsuleVideo`
+- `capsuledistrib`→`deployCapsule`
+- `capsulecompositecontext`→`collectCapsuleContext`
+- `capsuleparsecontext`→`transformCapsuleContext`
+- `capsuleretrieve`→`collectCapsuleRetrieve`
+
+12 fichiers modifiés. Compile OK.
+
+== Prochaine mission (012)
+
+- Piper TTS + Intégration N3 engine
+- Ou CAP-9 suite
+
+== Rappels
+
+- GroupId: cccp.education.capsule
+- Plugin ID: cccp.education.capsule
+- DAG N2 — dépend slider-gradle (compileOnly)

@@ -6,8 +6,8 @@ _DAG_ : N2 — Plugin Gradle de generation de capsules video
 _Dependance N2_ : slider-gradle (compileOnly)
 
 _Derniere mise a jour_ : 2026-05-18
-_Session terminee_ : 010 — CCCP namespace rename (8 files)
-_Prochaine session_ : 011 — Piper TTS + Intégration N3 engine
+_Session terminee_ : 011 — EPIC K-1 Renommage taxonomie (7 tâches)
+_Prochaine session_ : 012 — Piper TTS + Intégration N3 engine
 
 '''
 == REGLES ABSOLUES (resume)
@@ -25,14 +25,15 @@ _Prochaine session_ : 011 — Piper TTS + Intégration N3 engine
 
 |===
 | # | Date | Type | Sujet | Score
-| 010 | 2026-05-18 | migration | CCCP — namespace rename com.cheroliv.capsule → capsule (8 fichiers + build) | 10/10
+| 011 | 2026-05-19 | migration | EPIC K-1 — Renommage taxonomie (7 tâches : generateCapsuleScript, generateCapsule, generateCapsuleVideo, deployCapsule, collectCapsuleContext, transformCapsuleContext, collectCapsuleRetrieve) | 10/10
+| 010 | 2026-05-18 | migration | CCCP — namespace rename cccp.education.capsule → capsule (8 fichiers + build) | 10/10
 | 009 | 2026-05-17 | feat+fix | CAP-9 Pipeline E2E + TTS espeak + Audio mix FFmpeg + Timing dynamique (31 unit + 10 functional PASS, WebM 322s) | 10/10
 | 008 | 2026-05-17 | audit | Diagnostic pipeline (4 bugs : reveal.js paths, example-deck, format string, audio injection) | 8/10
-| 007 | 2026-05-16 | dev | CapsuleParseContextTask (Jackson JSON) + capsuleretrieve N3 + CapsuleDistrib isValidWebM fix + Jackson engine (42/42 PASS) | 10/10
+| 007 | 2026-05-16 | dev | CapsuleParseContextTask (Jackson JSON) + collectCapsuleRetrieve N3 + CapsuleDistrib isValidWebM fix + Jackson engine (42/42 PASS) | 10/10
 | 005 | 2026-05-16 | dev | CAP-4 CapsuleVideo orchestration (sequential fallback, multi-deck, noop bridge, @Tag integration chromium) + CAP-5 Cucumber BDD (5 scenarios Gherkin, cucumberTest task, 28/28 PASS) | 10/10
-| 004 | 2026-05-15 | dev | CAP-3 — Playwright Java capture (PlaywrightCapture interface/Impl/NoOp, capsulevideo task, injectAudio HTML, Kover 0.9.1, 19/19 PASS) | 10/10
+| 004 | 2026-05-15 | dev | CAP-3 — Playwright Java capture (PlaywrightCapture interface/Impl/NoOp, generateCapsuleVideo task, injectAudio HTML, Kover 0.9.1, 19/19 PASS) | 10/10
 | 003 | 2026-05-15 | dev | CAP-2 — Intégration TTS Piper (TtsEngine interface, PiperTtsEngine CLI réel, NoOpTtsEngine fallback, 11/11 PASS) | 10/10
-| 002 | 2026-05-15 | dev | CAP-1 — Plugin Gradle capsule (compileOnly slider, 2 taches capsulescript+capsulebuild, CapsuleExtension DSL, 5/5 PASS) | 10/10
+| 002 | 2026-05-15 | dev | CAP-1 — Plugin Gradle capsule (compileOnly slider, 2 taches generateCapsuleScript+generateCapsule, CapsuleExtension DSL, 5/5 PASS) | 10/10
 | 001 | 2026-05-15 | build | CAP-0.3 — Initialisation build Gradle (root + capsule-plugin, CapsulePlugin stub, wrapper 9.5.0, 2/2 PASS) | 10/10
 | 000 | 2026-05-14 | bootstrap | Gouvernance agent + cadrage architecture CAP-0 | ✅ TERMINE
 |===
@@ -50,7 +51,7 @@ _Prochaine session_ : 011 — Piper TTS + Intégration N3 engine
 | CAP-5 | Tests — Cucumber BDD + fonctionnels + unitaires (GradleTestKit) | ✅ TERMINE (session 005) | P2
 | CAP-6 | Integrations N3 — export composite-context pour engine | ✅ TERMINE (session 006) | P3
 | CAP-7 | CapsuleDistrib — FFmpeg recadrage TikTok 9:16 | ✅ TERMINE (session 006) | P3
-| CAP-8 | CapsuleParseContext — parse JSON Jackson + capsuleretrieve engine contract | ✅ TERMINE (session 007) | P3
+| CAP-8 | CapsuleParseContext — parse JSON Jackson + collectCapsuleRetrieve engine contract | ✅ TERMINE (session 007) | P3
 | CAP-9 | Fix Pipeline E2E — 4 bugs + TTS espeak + auto-apply slider + Playwright timeout | ✅ TERMINE (session 009) | P0
 |===
 
