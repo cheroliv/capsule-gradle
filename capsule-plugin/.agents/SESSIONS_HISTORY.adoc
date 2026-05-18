@@ -6,6 +6,7 @@ _Date creation_ : 2026-05-14
 
 |===
 | # | Date | Type | Sujet | Score
+| 010 | 2026-05-18 | migration | CCCP — namespace rename com.cheroliv.capsule → capsule (8 fichiers + build) | 10/10
 | 009 | 2026-05-17 | feat+fix | CAP-9 Pipeline E2E + TTS espeak + Audio mix FFmpeg + Timing dynamique (WebM 322s, 31+10 tests PASS) | 10/10
 | 008 | 2026-05-17 | audit | Diagnostic pipeline (4 bugs : reveal.js paths, example-deck, format string, audio injection) | 8/10
 | 007 | 2026-05-16 | dev | CapsuleParseContextTask (Jackson parse JSON) + capsuleretrieve engine N3 + CapsuleDistrib isValidWebM fix + Jackson dans engine build.gradle.kts (42/42 PASS) | 10/10

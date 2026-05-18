@@ -1,0 +1,19 @@
+= Session 010 — Migration CCCP Namespace (8 files)
+:author: cheroliv + opencode
+:date: 2026-05-18
+:status: TERMINE
+
+== Contexte
+Migration complete du namespace CCCP — tous les fichiers du package
+`com.cheroliv.capsule` deplaces vers le package `capsule`.
+
+== Actions
+* Rename massif 8 fichiers source + test : `com/cheroliv/capsule/` → `capsule/`
+* Fichiers concernes : CapsuleManager, CapsuleModels, CapsulePlugin, PlaywrightManager, TtsManager,
+  CapsulePluginTest, CapsuleStepDefinitions, CucumberTestRunner
+* Deplacement du functionalTest : `com/cheroliv/capsule/` → `capsule/`
+* Mise a jour `build.gradle.kts`
+
+== Résultat
+✅ Commit 4c6f8fe — 10 files changed, push OK
+✅ Compilation OK

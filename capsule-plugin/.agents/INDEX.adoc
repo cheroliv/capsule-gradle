@@ -5,9 +5,9 @@ _Regles absolues_ : voir `AGENT.adoc`
 _DAG_ : N2 — Plugin Gradle de generation de capsules video
 _Dependance N2_ : slider-gradle (compileOnly)
 
-_Derniere mise a jour_ : 2026-05-17
-_Session terminee_ : 009 — Pipeline E2E + TTS espeak + Audio mix FFmpeg + Timing dynamique
-_Prochaine session_ : 010 — Piper TTS + Intégration N3 engine
+_Derniere mise a jour_ : 2026-05-18
+_Session terminee_ : 010 — CCCP namespace rename (8 files)
+_Prochaine session_ : 011 — Piper TTS + Intégration N3 engine
 
 '''
 == REGLES ABSOLUES (resume)
@@ -25,6 +25,7 @@ _Prochaine session_ : 010 — Piper TTS + Intégration N3 engine
 
 |===
 | # | Date | Type | Sujet | Score
+| 010 | 2026-05-18 | migration | CCCP — namespace rename com.cheroliv.capsule → capsule (8 fichiers + build) | 10/10
 | 009 | 2026-05-17 | feat+fix | CAP-9 Pipeline E2E + TTS espeak + Audio mix FFmpeg + Timing dynamique (31 unit + 10 functional PASS, WebM 322s) | 10/10
 | 008 | 2026-05-17 | audit | Diagnostic pipeline (4 bugs : reveal.js paths, example-deck, format string, audio injection) | 8/10
 | 007 | 2026-05-16 | dev | CapsuleParseContextTask (Jackson JSON) + capsuleretrieve N3 + CapsuleDistrib isValidWebM fix + Jackson engine (42/42 PASS) | 10/10
