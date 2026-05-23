@@ -5,10 +5,11 @@ kotlin = "2.3.20"
 junit-platform-launcher = "1.10.2"
 junit-platform = "1.14.3"
 playwright = "1.52.0"
-kover = "0.9.1"
+kover = "0.9.8"
 cucumber = "7.34.3"
 jackson = "2.18.3"
 codebase = "0.0.1"
+koog = "0.8.0"
 
 [libraries]
 kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5", version.ref = "kotlin" }
@@ -21,6 +22,7 @@ cucumber-picocontainer = { module = "io.cucumber:cucumber-picocontainer", versio
 junit-platform-suite = { module = "org.junit.platform:junit-platform-suite", version.ref = "junit-platform" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+koog-agents = { module = "ai.koog:koog-agents", version.ref = "koog" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
