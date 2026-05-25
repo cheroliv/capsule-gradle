@@ -1,0 +1,18 @@
+= Session 066 — Clôture capsule-gradle
+:session: 066
+:date: 2026-05-25
+:status: TERMINÉ
+
+== Résumé
+
+Clôture de session : mise à jour Gradle wrapper 9.3.0 → 9.5.1, ajustements mineurs tests et INDEX.adoc.
+
+== Fichiers modifiés
+
+- capsule-plugin/gradle/wrapper/gradle-wrapper.properties : Gradle 9.3.0 → 9.5.1
+- gradle/wrapper/gradle-wrapper.properties : idem
+- capsule-plugin/src/main/kotlin/capsule/CapsulePlugin.kt
+- capsule-plugin/src/test/kotlin/capsule/CapsulePluginTest.kt
+- capsule-plugin/src/test/kotlin/capsule/scenarios/CapsuleStepDefinitions.kt
+- capsule-plugin/src/functionalTest/kotlin/capsule/CapsulePluginFunctionalTest.kt
+- capsule-plugin/.agents/INDEX.adoc : mise à jour dashboard

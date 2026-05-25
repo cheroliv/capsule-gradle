@@ -18,7 +18,7 @@ class CapsulePluginFunctionalTest {
         settingsFile.writeText("")
         buildFile.writeText("""
             plugins {
-                id('cccp.education.capsule')
+                id('education.cccp.capsule')
             }
             $extraConfig
         """.trimIndent())
@@ -162,7 +162,7 @@ class CapsuleAudioConstraintFunctionalTest {
         projectDir.resolve("settings.gradle").writeText("")
         projectDir.resolve("build.gradle").writeText("""
             plugins {
-                id('cccp.education.capsule')
+                id('education.cccp.capsule')
             }
             capsule {
                 ttsEngine = "espeak"
@@ -223,7 +223,7 @@ class CapsuleVideoOutputConstraintFunctionalTest {
         projectDir.resolve("settings.gradle").writeText("")
         projectDir.resolve("build.gradle").writeText("""
             plugins {
-                id('cccp.education.capsule')
+                id('education.cccp.capsule')
             }
             capsule {
                 ttsEngine = "noop"

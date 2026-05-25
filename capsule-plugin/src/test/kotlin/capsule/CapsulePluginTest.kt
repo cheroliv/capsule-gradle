@@ -14,21 +14,21 @@ class CapsulePluginTest {
     @Test
     fun `plugin registers generateCapsuleScript task`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("cccp.education.capsule")
+        project.plugins.apply("education.cccp.capsule")
         assertNotNull(project.tasks.findByName("generateCapsuleScript"))
     }
 
     @Test
     fun `plugin registers generateCapsule task`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("cccp.education.capsule")
+        project.plugins.apply("education.cccp.capsule")
         assertNotNull(project.tasks.findByName("generateCapsule"))
     }
 
     @Test
     fun `plugin registers generateCapsuleVideo task`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("cccp.education.capsule")
+        project.plugins.apply("education.cccp.capsule")
         val task = project.tasks.findByName("generateCapsuleVideo")
         assertNotNull(task)
         assertEquals("generate", task.group)
@@ -37,7 +37,7 @@ class CapsulePluginTest {
     @Test
     fun `plugin registers deployCapsule task`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("cccp.education.capsule")
+        project.plugins.apply("education.cccp.capsule")
         val task = project.tasks.findByName("deployCapsule")
         assertNotNull(task)
         assertEquals("deploy", task.group)
@@ -46,7 +46,7 @@ class CapsulePluginTest {
     @Test
     fun `plugin registers collectCapsuleContext task`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("cccp.education.capsule")
+        project.plugins.apply("education.cccp.capsule")
         val task = project.tasks.findByName("collectCapsuleContext")
         assertNotNull(task)
         assertEquals("collect", task.group)
@@ -55,7 +55,7 @@ class CapsulePluginTest {
     @Test
     fun `plugin registers capsule extension`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("cccp.education.capsule")
+        project.plugins.apply("education.cccp.capsule")
         val ext = project.extensions.findByType(CapsuleExtension::class.java)
         assertNotNull(ext)
     }
@@ -118,7 +118,7 @@ class TtsEngineTest {
     @Test
     fun `capsule extension has expected defaults`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("cccp.education.capsule")
+        project.plugins.apply("education.cccp.capsule")
         val ext = project.extensions.getByType(CapsuleExtension::class.java)
 
         assertEquals("piper", ext.ttsEngine.get())

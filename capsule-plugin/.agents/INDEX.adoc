@@ -7,14 +7,14 @@ _Dependance N2_ : slider-gradle (compileOnly)
 
 _Derniere mise a jour_ : 2026-05-19 (EPIC K fermé, K-5 terminé)
 _Session terminee_ : 011 — EPIC K-1 Renommage taxonomie (7 tâches)
-_Prochaine session_ : 012 — Piper TTS + Intégration N3 engine
+_Prochaine session_ : 012 — Piper TTS + Intégration N3 runner-gradle
 
 '''
 == REGLES ABSOLUES (resume)
 
 === 1. COMMITS/GIT — INTERDICTION FORMELLE sans permission
 === 2. PUBLISH — INTERDICTION FORMELLE sans permission
-=== 3. DAG N2 — importable par N3 engine, jamais importe N3
+=== 3. DAG N2 — importable par N3 runner-gradle, jamais importe N3
 === 4. PROCEDURE DE FIN DE SESSION — 6 ETAPES OBLIGATOIRES
 === 5. HOOK OUVERTURE — Checklist SESSION_CHECKLIST.adoc obligatoire
 === 6. ZERO secret/token/api key en dur dans le code source
@@ -40,10 +40,10 @@ _Prochaine session_ : 012 — Piper TTS + Intégration N3 engine
 |===
 | # | Date | Type | Sujet | Score
 | 011 | 2026-05-19 | migration | EPIC K-1 — Renommage taxonomie (7 tâches : generateCapsuleScript, generateCapsule, generateCapsuleVideo, deployCapsule, collectCapsuleContext, transformCapsuleContext, collectCapsuleRetrieve) | 10/10
-| 010 | 2026-05-18 | migration | CCCP — namespace rename cccp.education.capsule → capsule (8 fichiers + build) | 10/10
+| 010 | 2026-05-18 | migration | CCCP — namespace rename capsule (8 fichiers + build) | 10/10
 | 009 | 2026-05-17 | feat+fix | CAP-9 Pipeline E2E + TTS espeak + Audio mix FFmpeg + Timing dynamique (31 unit + 10 functional PASS, WebM 322s) | 10/10
 | 008 | 2026-05-17 | audit | Diagnostic pipeline (4 bugs : reveal.js paths, example-deck, format string, audio injection) | 8/10
-| 007 | 2026-05-16 | dev | CapsuleParseContextTask (Jackson JSON) + collectCapsuleRetrieve N3 + CapsuleDistrib isValidWebM fix + Jackson engine (42/42 PASS) | 10/10
+| 007 | 2026-05-16 | dev | CapsuleParseContextTask (Jackson JSON) + collectCapsuleRetrieve N3 + CapsuleDistrib isValidWebM fix + Jackson runner-gradle (42/42 PASS) | 10/10
 | 005 | 2026-05-16 | dev | CAP-4 CapsuleVideo orchestration (sequential fallback, multi-deck, noop bridge, @Tag integration chromium) + CAP-5 Cucumber BDD (5 scenarios Gherkin, cucumberTest task, 28/28 PASS) | 10/10
 | 004 | 2026-05-15 | dev | CAP-3 — Playwright Java capture (PlaywrightCapture interface/Impl/NoOp, generateCapsuleVideo task, injectAudio HTML, Kover 0.9.1, 19/19 PASS) | 10/10
 | 003 | 2026-05-15 | dev | CAP-2 — Intégration TTS Piper (TtsEngine interface, PiperTtsEngine CLI réel, NoOpTtsEngine fallback, 11/11 PASS) | 10/10
@@ -64,9 +64,9 @@ _Prochaine session_ : 012 — Piper TTS + Intégration N3 engine
 | CAP-3 | Playwright Java capture — pilotage reveal.js + API JVM native + injectAudio HTML | ✅ TERMINE (session 004) | P1
 | CAP-4 | CapsuleVideo task — orchestration TTS + Playwright → livrable video unique | ✅ TERMINE (session 005) | P1
 | CAP-5 | Tests — Cucumber BDD + fonctionnels + unitaires (GradleTestKit) | ✅ TERMINE (session 005) | P2
-| CAP-6 | Integrations N3 — export composite-context pour engine | ✅ TERMINE (session 006) | P3
-| CAP-7 | CapsuleDistrib — FFmpeg recadrage TikTok 9:16 | ✅ TERMINE (session 006) | P3
-| CAP-8 | CapsuleParseContext — parse JSON Jackson + collectCapsuleRetrieve engine contract | ✅ TERMINE (session 007) | P3
+| CAP-6 | Integrations N3 — export composite-context pour runner-gradle | ✅ TERMINE (session 006) | P3
+...
+| CAP-8 | CapsuleParseContext — parse JSON Jackson + collectCapsuleRetrieve runner-gradle contract | ✅ TERMINE (session 007) | P3
 | CAP-9 | Fix Pipeline E2E — 4 bugs + TTS espeak + auto-apply slider + Playwright timeout | ✅ TERMINE (session 009) | P0
 |===
 
