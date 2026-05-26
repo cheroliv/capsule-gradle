@@ -1,0 +1,9 @@
+= BACKLOG — capsule-gradle (Brooklyn Tech)
+
+== P0 — CRITIQUE
+
+. *PROMPT_REPRISE MANQUANT* — INDEX.adoc liste session 011 terminée mais aucun PROMPT_REPRISE n'existe. Impossible de savoir ce qui a été livré, ce qui reste à faire. Créer PROMPT_REPRISE session 012 avec l'état réel du projet.
+
+== P1
+
+. Mettre à jour le portefeuille cross-boroughs dans tous les INDEX.adoc
